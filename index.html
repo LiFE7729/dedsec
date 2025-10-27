@@ -31,28 +31,28 @@
   .topbar{
     padding:10px 14px;
     display:flex;
-    align-items:center;        /* vertical center */
-    justify-content:center;    /* horizontal center */
-    position:relative;         /* allow status to stay on right */
-    gap:0;                     /* remove flex gap for centered text */
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    gap:0;
   }
 
   .topbar .title {
     text-align:center;
     display:block;
     line-height:1.2;
-    color: red;               /* <-- title is red now */
+    color:red;
   }
 
   .topbar .small {
     text-align:center;
     display:block;
     line-height:1.2;
-    color: var(--muted);       /* stays gray */
+    color:var(--muted);
   }
 
   .topbar .status{
-    position:absolute;         /* keep it on the far right */
+    position:absolute;
     right:14px;
     top:50%;
     transform:translateY(-50%);
@@ -60,6 +60,7 @@
     font-size:13px;
   }
 
+  /* ---------- MAIN ---------- */
   .main{
     flex:1;
     display:flex;
@@ -145,7 +146,6 @@
     color:var(--muted);
   }
 
-  /* skull/banner flash (center overlay) */
   .flash{
     position:absolute;
     z-index:5;
@@ -165,14 +165,76 @@
     color:#ff3b30;
     text-shadow:0 0 8px rgba(255,59,48,0.18);
   }
-</style>
 
+  /* ---------- RESPONSIVE ENHANCEMENTS ---------- */
+  @media (max-width: 900px) {
+    .main {
+      flex-direction: column;
+    }
+
+    .right {
+      width: 100%;
+      min-width: unset;
+      flex: none;
+      order: 2;
+    }
+
+    .left {
+      order: 1;
+      height: 60vh;
+    }
+
+    .panel {
+      max-height: 40vh;
+    }
+
+    .topbar {
+      flex-direction: column;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .topbar .status {
+      position: static;
+      transform: none;
+      margin-top: 6px;
+    }
+
+    pre.ascii {
+      font-size: 10px;
+      line-height: 0.9;
+      overflow-x: auto;
+    }
+
+    #asciiOverlay {
+      font-size: 10px;
+      padding: 10px;
+      width: 95vw;
+      overflow-x: auto;
+    }
+
+    button#timedButton {
+      width: 100%;
+      font-size: 14px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    pre.ascii {
+      font-size: 8px;
+    }
+    #asciiOverlay {
+      font-size: 8px;
+    }
+  }
+</style>
 </head>
+
 <body>
 <div class="wrap" id="wrap">
   <div class="topbar">
-    <div class="title">YOU'VE BEEN HACKED </div>
-    <div class="small"> --watch where you click--</div>
+    <div class="title">YOU'VE BEEN HACKED</div>
+    <div class="small">--watch where you click--</div>
     <div class="status" id="status">status: running</div>
   </div>
 
@@ -181,15 +243,10 @@
       <canvas id="matrix"></canvas>
 
       <div class="overlay">
-        <div class="banner-area" id="bannerArea">
-          <!-- Centered banner placeholder -->
-        </div>
+        <div class="banner-area" id="bannerArea"></div>
       </div>
 
-
-      <!-- skull and ascii banner overlays -->
-      <div class="flash" id="skull">
-<pre>
+      <div class="flash" id="skull"><pre>
                                                                                           
                                         #                                                 
                                      @&/ &@@@@@@@@  #. / *                                
@@ -226,10 +283,9 @@
   (                               @#@              @       @                              
   .                                                @                                      
   .                                               ,@                                      
-</pre>
-      </div>
-      <div class="flash" id="asciiBanner">
-<pre>
+</pre></div>
+
+      <div class="flash" id="asciiBanner"><pre>
  ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▓█████ ▓█████▄ 
 ▓██░ ██▒▒████▄    ▒██▀ ▀█   ██▄█▒ ▓█   ▀ ▒██▀ ██▌
 ▒██▀▀██░▒██  ▀█▄  ▒▓█    ▄ ▓███▄░ ▒███   ░██   █▌
@@ -240,42 +296,29 @@
  ░  ░░ ░  ░   ▒   ░        ░ ░░ ░    ░    ░ ░  ░ 
  ░  ░  ░      ░  ░░ ░      ░  ░      ░  ░   ░    
                   ░                       ░      
-</pre>
-      </div>
+</pre></div>
     </div>
 
     <div class="right">
       <div class="panel" style="flex:1">
         <div id="logs" class="log" aria-live="polite"></div>
       </div>
-<div class="panel" style="height:86px; display:flex; flex-direction:column; justify-content:space-between">
-  <div class="pings" id="pings">Pings: idle</div>
 
-<button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer; background-color:red; color:black; border:none; -webkit-appearance:none; appearance:none;">
-  CLICK HERE TO START YOUR MANDATORY TRAINING
-</button>
+      <div class="panel" style="height:86px; display:flex; flex-direction:column; justify-content:space-between">
+        <div class="pings" id="pings">Pings: idle</div>
 
+        <button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer; background-color:red; color:black; border:none; appearance:none;">
+          CLICK HERE TO START YOUR MANDATORY TRAINING
+        </button>
 
-<script>
-  const btn = document.getElementById('timedButton');
-  setTimeout(() => {
-    btn.style.display = 'inline-block';
-  }, 5000);
-
-  btn.addEventListener('click', () => {
-    window.location.href = 'https://staysafe.sophos.com/?t=eyJhbGciOiJIUzI1NiJ9.eyJ0cmFja2luZ190b2tlbiI6IjYzN2RiYjYzLTMwNDEtNGYxZS05OTk1LTI5YmVjYjk5NmIwZCIsImNlbGwiOiJodHRwczovLzIxZzZqZnZoeTYuZXhlY3V0ZS1hcGkudXMtZWFzdC0yLmFtYXpvbmF3cy5jb20vcHJvZC9hcGkvcGhpc2hpbmdjYW1wYWlnbiIsImNhbXBhaWduX3Rva2VuIjoiYjYyNjFkNDctOGFhYi00NTU5LTlkZTktMGM4MDlhMDQ3NGRlIiwic2VsZWN0ZWRfYXR0YWNrX3Rva2VuIjoiYjNjYzBkNDUtMmYyMi00N2NiLTljOTEtNDkyOGVlN2Y0NDVjIiwidGVzdF90b2tlbiI6dHJ1ZSwiZXh0ZXJuYWxfdHJhaW5pbmciOmZhbHNlLCJkaXJlY3RfZGVsaXZlcnkiOmZhbHNlLCJpYXQiOjE3NjE1ODYyOTEsImlzcyI6Imh0dHBzOi8vYXBwLnBoaXNodGhyZWF0LmNvbSIsImV4cCI6MTc2OTM2MjI5MX0.HeArwWasSyvJQ6IbfVOirYGV7CrfjzR1rkATLQOiTCI';
-  });
-</script>
-
-
-  <div class="small">--This was a simulated phish threat--</div>
-</div>
+        <div class="small">--This was a simulated phish threat--</div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ---------- SCRIPTS ---------- -->
 <script>
-/* ---------- CONFIG ---------- */
 const CONFIG = {
   matrix: { fps: 30, charSize: 14, chance: 0.96 },
   fakeLogRateMs: [220, 500],
@@ -286,9 +329,7 @@ const CONFIG = {
   autoStart: true
 };
 
-const FLASH_COLORS = ['#ff3b30','#30d158','#0a84ff']; // red, green, blue
-
-/* ---------- ELEMENTS ---------- */
+const FLASH_COLORS = ['#ff3b30','#30d158','#0a84ff'];
 const canvas = document.getElementById('matrix');
 const ctx = canvas.getContext('2d');
 const logsEl = document.getElementById('logs');
@@ -296,154 +337,43 @@ const pingsEl = document.getElementById('pings');
 const skullEl = document.getElementById('skull');
 const asciiBannerEl = document.getElementById('asciiBanner');
 const statusEl = document.getElementById('status');
-
 let matrixAnimationId = null;
 let matrixCols = [];
 let colCount = 0;
 let running = false;
 
 function randBetween([min,max]){return Math.floor(min + Math.random()*(max-min));}
-
-/* ---------- MATRIX ---------- */
-function resizeCanvas(){
-  canvas.width = canvas.clientWidth;
-  canvas.height = canvas.clientHeight;
-  colCount = Math.max(2, Math.floor(canvas.width/CONFIG.matrix.charSize));
-  matrixCols = new Array(colCount).fill(0);
-}
+function resizeCanvas(){canvas.width=canvas.clientWidth;canvas.height=canvas.clientHeight;colCount=Math.max(2,Math.floor(canvas.width/CONFIG.matrix.charSize));matrixCols=new Array(colCount).fill(0);}
 window.addEventListener('resize', resizeCanvas);
+function drawMatrixFrame(){const w=canvas.width,h=canvas.height;ctx.fillStyle='rgba(0,0,0,0.2)';ctx.fillRect(0,0,w,h);ctx.font=CONFIG.matrix.charSize+'px monospace';for(let i=0;i<colCount;i++){if(matrixCols[i]===0&&Math.random()>CONFIG.matrix.chance){matrixCols[i]=Math.floor(1+Math.random()*(h/CONFIG.matrix.charSize));}if(matrixCols[i]>0){const ch="01@#%$&*+=-<>0123456789".charAt(Math.floor(Math.random()*22));ctx.fillStyle='#34c759';ctx.fillText(ch,i*CONFIG.matrix.charSize,matrixCols[i]*CONFIG.matrix.charSize);matrixCols[i]--;}}}
+function matrixStep(){drawMatrixFrame();matrixAnimationId=requestAnimationFrame(matrixStep);}
+function miniMatrixBurst(seconds=0.6){const end=performance.now()+seconds*1000;function burst(){drawMatrixFrame();if(performance.now()<end)requestAnimationFrame(burst);}requestAnimationFrame(burst);}
 
-function drawMatrixFrame(){
-  const w = canvas.width, h = canvas.height;
-  ctx.fillStyle='rgba(0,0,0,0.2)';
-  ctx.fillRect(0,0,w,h);
-  ctx.font=CONFIG.matrix.charSize+'px monospace';
-  for(let i=0;i<colCount;i++){
-    if(matrixCols[i]===0 && Math.random()>CONFIG.matrix.chance){
-      matrixCols[i]=Math.floor(1+Math.random()*(h/CONFIG.matrix.charSize));
-    }
-    if(matrixCols[i]>0){
-      const ch = "01@#%$&*+=-<>0123456789".charAt(Math.floor(Math.random()*22));
-      ctx.fillStyle='#34c759';
-      ctx.fillText(ch,i*CONFIG.matrix.charSize,matrixCols[i]*CONFIG.matrix.charSize);
-      matrixCols[i]--;
-    }
-  }
-}
-function matrixStep(){ drawMatrixFrame(); matrixAnimationId=requestAnimationFrame(matrixStep); }
-
-function miniMatrixBurst(seconds=0.6){
-  const end=performance.now()+seconds*1000;
-  function burst(){
-    drawMatrixFrame();
-    if(performance.now()<end) requestAnimationFrame(burst);
-  }
-  requestAnimationFrame(burst);
-}
-
-/* ---------- LOGS ---------- */
-const FAKE_LOGS=[
-  "[INIT] Establishing secure channel...",
-  "[OK] Remote handshake complete.",
-  "[WARN] Elevation attempt detected — using fallback exploit.",
-  "[TRACE] Running payload: specter_v2",
-  "[OK] Credentials dumped to /tmp/ghost",
-  "[ERR] Sandbox handshake failed — switching vectors.",
-  "[UNAUTHORIZED USER] Access token: ***REDACTED***",
-  "[DONE] Process complete. Persistence: disabled (demo mode)."
-];
-
-let logTimer=null;
-const MAX_LOG_LINES = 30; // adjust to fit the panel height
-let logBuffer = [];
-
-function addLog(msg, color) {
-  const ts = new Date().toLocaleTimeString();
-  logBuffer.push(`${ts} ${msg}`);
-
-  if (logBuffer.length > MAX_LOG_LINES) {
-    logBuffer.shift(); // remove oldest log
-  }
-
-  logsEl.textContent = logBuffer.join('\n');
-  logsEl.scrollTop = logsEl.scrollHeight; // ensures newest lines are visible at bottom
-}
-
-function startFakeLogs(){if(logTimer)return;function scheduleNext(){const ms=randBetween(CONFIG.fakeLogRateMs);logTimer=setTimeout(()=>{addLog(FAKE_LOGS[Math.floor(Math.random()*FAKE_LOGS.length)]);scheduleNext();},ms);}scheduleNext();}
+const FAKE_LOGS=["[INIT] Establishing secure channel...","[OK] Remote handshake complete.","[WARN] Elevation attempt detected — using fallback exploit.","[TRACE] Running payload: specter_v2","[OK] Credentials dumped to /tmp/ghost","[ERR] Sandbox handshake failed — switching vectors.","[UNAUTHORIZED USER] Access token: ***REDACTED***","[DONE] Process complete. Persistence: disabled (demo mode)."];
+let logTimer=null;const MAX_LOG_LINES=30;let logBuffer=[];
+function addLog(msg){const ts=new Date().toLocaleTimeString();logBuffer.push(`${ts} ${msg}`);if(logBuffer.length>MAX_LOG_LINES)logBuffer.shift();logsEl.textContent=logBuffer.join('\n');logsEl.scrollTop=logsEl.scrollHeight;}
+function startFakeLogs(){if(logTimer)return;function next(){const ms=randBetween(CONFIG.fakeLogRateMs);logTimer=setTimeout(()=>{addLog(FAKE_LOGS[Math.floor(Math.random()*FAKE_LOGS.length)]);next();},ms);}next();}
 function stopFakeLogs(){clearTimeout(logTimer);logTimer=null;}
 
-/* ---------- PINGS ---------- */
 let pingMainTimer=null;
-function startPingCycle(){if(pingMainTimer)return;pingMainTimer=setInterval(()=>{runPingSequence(CONFIG.pingCount); if(Math.random()<CONFIG.skullChanceEachCycle){flashRandom(skullEl,CONFIG.skullShowSecs*1000);} if(Math.random()<CONFIG.skullChanceEachCycle){flashRandom(asciiBannerEl,CONFIG.skullShowSecs*1000);}},CONFIG.pingIntervalMs);}
-function stopPingCycle(){clearInterval(pingMainTimer); pingMainTimer=null;}
-function runPingSequence(count=3){let i=0;pingsEl.textContent='Pings:';const pingStep=setInterval(()=>{i++;pingsEl.textContent='Pings:'+'.'.repeat((i%3)+1);addLog(`[UNAUTHORIZED USER] ping${'.'.repeat((i%3)+1)}`); miniMatrixBurst(0.6);if(i>=count){clearInterval(pingStep);pingsEl.textContent='Pings: idle';}},650);}
+function startPingCycle(){if(pingMainTimer)return;pingMainTimer=setInterval(()=>{runPingSequence(CONFIG.pingCount);if(Math.random()<CONFIG.skullChanceEachCycle){flashRandom(skullEl,CONFIG.skullShowSecs*1000);}if(Math.random()<CONFIG.skullChanceEachCycle){flashRandom(asciiBannerEl,CONFIG.skullShowSecs*1000);}},CONFIG.pingIntervalMs);}
+function stopPingCycle(){clearInterval(pingMainTimer);pingMainTimer=null;}
+function runPingSequence(count=3){let i=0;pingsEl.textContent='Pings:';const step=setInterval(()=>{i++;pingsEl.textContent='Pings:'+'.'.repeat((i%3)+1);addLog(`[UNAUTHORIZED USER] ping${'.'.repeat((i%3)+1)}`);miniMatrixBurst(0.6);if(i>=count){clearInterval(step);pingsEl.textContent='Pings: idle';}},650);}
 
-/* ---------- RANDOM FLASH ---------- */
-function flashRandom(el,duration){
-  const parent = el.parentElement;
-  const pw = parent.clientWidth;
-  const ph = parent.clientHeight;
-  const ew = el.offsetWidth;
-  const eh = el.offsetHeight;
-  const left = Math.floor(Math.random()*(pw-ew));
-  const top = Math.floor(Math.random()*(ph-eh));
-  el.style.left = left+'px';
-  el.style.top = top+'px';
+function flashRandom(el,duration){const parent=el.parentElement;const pw=parent.clientWidth;const ph=parent.clientHeight;const ew=el.offsetWidth;const eh=el.offsetHeight;const left=Math.floor(Math.random()*(pw-ew));const top=Math.floor(Math.random()*(ph-eh));el.style.left=left+'px';el.style.top=top+'px';const color=FLASH_COLORS[Math.floor(Math.random()*FLASH_COLORS.length)];el.querySelector('pre').style.color=color;el.querySelector('pre').style.textShadow=`0 0 8px ${color}30`;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),duration);}
 
-  // pick a random color for this flash
-  const color = FLASH_COLORS[Math.floor(Math.random()*FLASH_COLORS.length)];
-  el.querySelector('pre').style.color = color;
-  el.querySelector('pre').style.textShadow = `0 0 8px ${color}30`;
+function startAll(){if(running)return;running=true;resizeCanvas();matrixStep();startFakeLogs();startPingCycle();statusEl.textContent='status: running';}
+function stopAll(){running=false;if(matrixAnimationId)cancelAnimationFrame(matrixAnimationId);stopFakeLogs();stopPingCycle();statusEl.textContent='status: stopped';}
 
-  el.classList.add('visible');
-  setTimeout(()=>el.classList.remove('visible'), duration);
-}
+document.addEventListener('DOMContentLoaded',()=>{addLog("[DEMO] Initializing demo...");addLog("[DEMO] Starting matrix and log generators.");setTimeout(()=>{startAll();setTimeout(()=>flashRandom(skullEl,CONFIG.skullShowSecs*1000),900);},650);});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(matrixAnimationId)cancelAnimationFrame(matrixAnimationId);}else{if(running)matrixStep();}});
 
-/* ---------- START / STOP ---------- */
-function startAll(){
-  if(running)return;
-  running=true;
-  resizeCanvas();
-  matrixStep();
-  startFakeLogs();
-  startPingCycle();
-  statusEl.textContent='status: running';
-}
-function stopAll(){
-  running=false;
-  if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId);
-  stopFakeLogs();
-  stopPingCycle();
-  statusEl.textContent='status: stopped';
-}
-
-/* ---------- BOOT ---------- */
-document.addEventListener('DOMContentLoaded', ()=>{
-  addLog("[DEMO] Initializing demo...");
-  addLog("[DEMO] Starting matrix and log generators.");
-  setTimeout(()=>{startAll(); setTimeout(()=>flashRandom(skullEl,CONFIG.skullShowSecs*1000),900);},650);
-});
-document.addEventListener('visibilitychange', ()=>{if(document.hidden){if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId);}else{if(running) matrixStep();}});
+const btn=document.getElementById('timedButton');
+setTimeout(()=>{btn.style.display='inline-block';},5000);
+btn.addEventListener('click',()=>{window.location.href='https://staysafe.sophos.com/';});
 </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // existing startup code
-    startAll();
-    setTimeout(flashSkull, 900);
-</script>
-
-<script>
-  // BUTTON TIMER
-  setTimeout(() => {
-    const btn = document.getElementById('timedButton');
-    if(btn) btn.style.display = 'inline-block';
-  }, 2000); // 2000ms = 2 seconds
-</script>
-
-<!-- Put this at the bottom of your <body> -->
 <div id="asciiOverlay" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); color:#ffffff; font-family:monospace; white-space:pre; font-size:14px; z-index:9999; text-align:center;">
-
  _____ _     _        _                    _                              _    _   _                    _       
 |_   _| |   (_)      (_)                  | |                            | |  | | | |                  | |      
   | | | |__  _ ___    _ ___    _ __   ___ | |_     __ _    _ __ ___  __ _| |  | |_| |__  _ __ ___  __ _| |_     
@@ -484,14 +414,10 @@ document.addEventListener('DOMContentLoaded', () => {
                                                                                           \___/  (_)   \_/   (_)
                                                                                                                 
                                                                                                                 
-
 </div>
 
 <script>
-  setTimeout(() => {
-    const overlay = document.getElementById('asciiOverlay');
-    overlay.style.display = 'block';
-  }, 5000); // 5000ms = 5 seconds
+setTimeout(()=>{document.getElementById('asciiOverlay').style.display='block';},5000);
 </script>
 
 </body>
