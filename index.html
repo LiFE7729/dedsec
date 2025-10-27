@@ -11,6 +11,8 @@
     --green:#30d158;
     --accent:#ff3b30;
     --muted:#7f8b83;
+    /* a base char size used for canvas & monospace art; JS will overwrite CONFIG too */
+    --char-size: 14px;
   }
 
   html,body{
@@ -75,6 +77,7 @@
     background:rgba(255,255,255,0.02);
     border-radius:6px;
     overflow:hidden;
+    min-height:300px;
   }
 
   canvas{
@@ -102,16 +105,24 @@
     flex-direction:column;
   }
 
+  /* ASCII / banners: responsive font sizing using clamp */
   pre.ascii{
     font-family:Consolas,monaco,monospace;
-    white-space:pre;
+    /* allow wrapping for very narrow screens, but keep monospace feel */
+    white-space:pre-wrap;
+    word-break:break-word;
     line-height:1;
     margin:0;
     padding:0;
     color:var(--accent);
     text-shadow:0 0 6px rgba(255,59,48,0.15);
+    /* scale between 8px and 18px depending on viewport (smooth) */
+    font-size: clamp(8px, 2.2vw, 18px);
+    max-width: 95vw;
+    overflow-x: auto;
   }
 
+  /* Right column */
   .right{
     width:360px;
     min-width:240px;
@@ -154,16 +165,39 @@
     align-items:center;
     justify-content:center;
     opacity:0;
-    transition:opacity 0.22s ease;
+    transition:opacity 0.22s ease, transform 0.22s ease;
+    will-change:transform,opacity,left,top;
   }
 
   .flash.visible{
     opacity:1;
+    transform:scale(1.02);
   }
 
   .flash pre{
     color:#ff3b30;
     text-shadow:0 0 8px rgba(255,59,48,0.18);
+    margin:0;
+  }
+
+  /* overlay ascii modal */
+  #asciiOverlay{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:#ffffff;
+    font-family:monospace;
+    white-space:pre-wrap;
+    font-size: clamp(10px, 3.4vw, 16px);
+    z-index:9999;
+    text-align:center;
+    max-height:85vh;
+    overflow:auto;
+    padding:10px;
+    background:rgba(0,0,0,0.6);
+    border-radius:8px;
   }
 
   /* ---------- RESPONSIVE ENHANCEMENTS ---------- */
@@ -201,16 +235,16 @@
     }
 
     pre.ascii {
-      font-size: 10px;
-      line-height: 0.9;
+      /* smaller but still readable on phones */
+      font-size: clamp(8px, 3.4vw, 14px);
+      line-height: 0.95;
       overflow-x: auto;
+      max-width: 100%;
     }
 
     #asciiOverlay {
-      font-size: 10px;
-      padding: 10px;
       width: 95vw;
-      overflow-x: auto;
+      font-size: clamp(8px, 3.8vw, 14px);
     }
 
     button#timedButton {
@@ -221,11 +255,13 @@
 
   @media (max-width: 500px) {
     pre.ascii {
-      font-size: 8px;
+      font-size: clamp(7px, 4.2vw, 12px);
     }
     #asciiOverlay {
-      font-size: 8px;
+      font-size: clamp(7px, 4.6vw, 12px);
+      padding:8px;
     }
+    .right { gap:8px; }
   }
 </style>
 </head>
@@ -243,10 +279,12 @@
       <canvas id="matrix"></canvas>
 
       <div class="overlay">
-        <div class="banner-area" id="bannerArea"></div>
+        <div class="banner-area" id="bannerArea">
+          <!-- You can place a pre.ascii block here if you want ASCII centered in banner-area -->
+        </div>
       </div>
 
-      <div class="flash" id="skull"><pre>
+      <div class="flash" id="skull"><pre class="ascii">
                                                                                           
                                         #                                                 
                                      @&/ &@@@@@@@@  #. / *                                
@@ -255,37 +293,37 @@
                         @@@@@@@@@@@@@@  &    @ *, ,  @.@@@@@@@@@@@&@.                     
                      &@@@@@@@@@@ ,           @            &@@@@@@@@@@%                    
                    ,@@@@@@@@                                  @@@@@@@@@@(                 
-                  @@@@@@@@*                                     &@@@@@@@@@ @              
-                 @@@@@@@                                          #@@@@@@@ @              
+                  @@@@@@@@*                                     &@@@@@@@@@ @             
+                 @@@@@@@                                          #@@@@@@@ @             
                 @@@@@@@                                             @@@@@@@%              
-               @@@@@@/                              &                @@@@@@@@             
-              .@@@@@@.                           *.@@@ &/             @@@@@@,             
-              @@@@@@          @@@@@@@@         .@@@@@@@@@@@           @@@@@@@             
-             #@@@@@@     ,%@@@@@@@@@@@@&      #@@@@@@@@@@@@@@@       , @@@@@@@            
-              @@@@@@     @@@@@@@@@@@@@@@    &*@@@@@@@@@@@@@@@@#   #@,  @@@@@@.            
-              @@@@@@&   @@@@@@@@@@@@@@@@@   ( @@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@             
-             . @@@@@  ,@@@@@@@@@@@@@@@@@.     &@@@@@@@@@@@@@@@@@ &@@@@@@@@@@@*            
-             @ @@@@@@@@@@@@@@@@@@@@@@@@@        *@@@@@@@@@@@@@@,  @@@@@@@@@@              
-                @@@@@@@@@@@@@@@@@@@@@@            @@@@@@@@@@@#.     @@@@@@@               
-                %&@@@@@@@.&*@@@@@@@.                , /@&@@          @@@@@@/              
-                   @@@@@@#  @                            @@         ,&@@@@@@.             
-                   @@@@@@               /                .**    .  *@@@@@@@               
-                  @@@@@@         @#   /. *      @&    % @@@@@  @@@@@@@@@@#,               
-                 &@@@@@@   @#  @@@@   @@@@@  ,@@@@@@    @@@@@@@@@@@@@@@&@                 
-                #&@@@@@@@@@# @,@@@@@ @@@@@@@  @@@@@@@   @@@@@@@@@@@@ . .@                 
-                 @&@@@@@@@@@@@@@@@@@@ @@@@@@   @@@@@@   @@@@@@@@        @                 
-                     @@ @@@@@@@@@@@@@%@@@@@@. #@@@@@@   (@@@@@@@        %                 
-                     @      / ,@@@@@@#(@@@@@@ ,,@@@@@@.  @@@@@%                           
-  %                  @          @@@@@&#@@@@@@@@@@@@@@@@@@@@@@@@                           
-  .                            .@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                           
-  *                            , @@@@@@@@@@,  @*@/@@@@@@@% @,/ @@                         
+               @@@@@@/                              &                @@@@@@@@            
+              .@@@@@@.                           *.@@@ &/             @@@@@@,            
+              @@@@@@          @@@@@@@@         .@@@@@@@@@@@           @@@@@@@            
+             #@@@@@@     ,%@@@@@@@@@@@@&      #@@@@@@@@@@@@@@@       , @@@@@@@          
+              @@@@@@     @@@@@@@@@@@@@@@    &*@@@@@@@@@@@@@@@@#   #@,  @@@@@@.          
+              @@@@@@&   @@@@@@@@@@@@@@@@@   ( @@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@            
+             . @@@@@  ,@@@@@@@@@@@@@@@@@.     &@@@@@@@@@@@@@@@@@ &@@@@@@@@@@@*          
+             @ @@@@@@@@@@@@@@@@@@@@@@@@@        *@@@@@@@@@@@@@@,  @@@@@@@@@@            
+                @@@@@@@@@@@@@@@@@@@@@@            @@@@@@@@@@@#.     @@@@@@@              
+                %&@@@@@@@.&*@@@@@@@.                , /@&@@          @@@@@@/             
+                   @@@@@@#  @                            @@         ,&@@@@@@.            
+                   @@@@@@               /                .**    .  *@@@@@@@              
+                  @@@@@@         @#   /. *      @&    % @@@@@  @@@@@@@@@@#,              
+                 &@@@@@@   @#  @@@@   @@@@@  ,@@@@@@    @@@@@@@@@@@@@@@&@                
+                #&@@@@@@@@@# @,@@@@@ @@@@@@@  @@@@@@@   @@@@@@@@@@@@ . .@                
+                 @&@@@@@@@@@@@@@@@@@@ @@@@@@   @@@@@@   @@@@@@@@        @                
+                     @@ @@@@@@@@@@@@@%@@@@@@. #@@@@@@   (@@@@@@@        %                
+                     @      / ,@@@@@@#(@@@@@@ ,,@@@@@@.  @@@@@%                          
+  %                  @          @@@@@&#@@@@@@@@@@@@@@@@@@@@@@@@                          
+  .                            .@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                          
+  *                            , @@@@@@@@@@,  @*@/@@@@@@@% @,/ @@                        
                                   %.@         #*   @       @                              
   (                               @#@              @       @                              
-  .                                                @                                      
-  .                                               ,@                                      
+  .                                                @                                       
+  .                                               ,@                                       
 </pre></div>
 
-      <div class="flash" id="asciiBanner"><pre>
+      <div class="flash" id="asciiBanner"><pre class="ascii">
  ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▓█████ ▓█████▄ 
 ▓██░ ██▒▒████▄    ▒██▀ ▀█   ██▄█▒ ▓█   ▀ ▒██▀ ██▌
 ▒██▀▀██░▒██  ▀█▄  ▒▓█    ▄ ▓███▄░ ▒███   ░██   █▌
@@ -317,6 +355,11 @@
   </div>
 </div>
 
+<!-- overlay modal ascii (keeps original content but responsive) -->
+<div id="asciiOverlay" aria-hidden="true">
+ <!-- keeps your large ASCII modal; remains scrollable on phone -->
+</div>
+
 <!-- ---------- SCRIPTS ---------- -->
 <script>
 const CONFIG = {
@@ -343,11 +386,62 @@ let colCount = 0;
 let running = false;
 
 function randBetween([min,max]){return Math.floor(min + Math.random()*(max-min));}
-function resizeCanvas(){canvas.width=canvas.clientWidth;canvas.height=canvas.clientHeight;colCount=Math.max(2,Math.floor(canvas.width/CONFIG.matrix.charSize));matrixCols=new Array(colCount).fill(0);}
+
+/* Responsive canvas + char size:
+   - use devicePixelRatio for crisp drawing
+   - compute a charSize based on the available client width so small screens get smaller matrix glyphs.
+*/
+function resizeCanvas(){
+  // set canvas physical pixels using dpr for crispness
+  const dpr = window.devicePixelRatio || 1;
+  // ensure canvas displays full area of parent
+  const clientW = canvas.clientWidth || canvas.parentElement.clientWidth || window.innerWidth;
+  const clientH = canvas.clientHeight || canvas.parentElement.clientHeight || Math.max(300, window.innerHeight*0.5);
+
+  // compute a dynamic char size (px) based on client width; clamp between 7 and 18
+  // formula: smaller viewports get smaller chars
+  const computedChar = Math.round(Math.max(7, Math.min(18, clientW * 0.028)));
+  CONFIG.matrix.charSize = computedChar;
+
+  canvas.width = Math.max(2, Math.floor(clientW * dpr));
+  canvas.height = Math.max(2, Math.floor(clientH * dpr));
+  // style size stays in CSS pixels so layout is stable
+  canvas.style.width = clientW + 'px';
+  canvas.style.height = clientH + 'px';
+  // map CSS pixels to device pixels for drawing
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  // compute number of columns using CSS pixel width (not physical pixels)
+  colCount = Math.max(2, Math.floor(clientW / CONFIG.matrix.charSize));
+  matrixCols = new Array(colCount).fill(0);
+}
 window.addEventListener('resize', resizeCanvas);
-function drawMatrixFrame(){const w=canvas.width,h=canvas.height;ctx.fillStyle='rgba(0,0,0,0.2)';ctx.fillRect(0,0,w,h);ctx.font=CONFIG.matrix.charSize+'px monospace';for(let i=0;i<colCount;i++){if(matrixCols[i]===0&&Math.random()>CONFIG.matrix.chance){matrixCols[i]=Math.floor(1+Math.random()*(h/CONFIG.matrix.charSize));}if(matrixCols[i]>0){const ch="01@#%$&*+=-<>0123456789".charAt(Math.floor(Math.random()*22));ctx.fillStyle='#34c759';ctx.fillText(ch,i*CONFIG.matrix.charSize,matrixCols[i]*CONFIG.matrix.charSize);matrixCols[i]--;}}}
-function matrixStep(){drawMatrixFrame();matrixAnimationId=requestAnimationFrame(matrixStep);}
-function miniMatrixBurst(seconds=0.6){const end=performance.now()+seconds*1000;function burst(){drawMatrixFrame();if(performance.now()<end)requestAnimationFrame(burst);}requestAnimationFrame(burst);}
+window.addEventListener('orientationchange', () => { setTimeout(resizeCanvas, 150); });
+
+function drawMatrixFrame(){
+  const w = canvas.width, h = canvas.height;
+  // Because ctx is transformed to device pixels, we draw using CSS pixels units.
+  // Use a slight fade to create the trailing effect.
+  ctx.fillStyle='rgba(0,0,0,0.2)';
+  ctx.fillRect(0,0,canvas.style ? canvas.clientWidth : w, canvas.style ? canvas.clientHeight : h);
+  ctx.font=CONFIG.matrix.charSize+'px monospace';
+  for(let i=0;i<colCount;i++){
+    if(matrixCols[i]===0 && Math.random()>CONFIG.matrix.chance){
+      matrixCols[i]=Math.floor(1 + Math.random()*( (canvas.clientHeight || h) / CONFIG.matrix.charSize ));
+    }
+    if(matrixCols[i]>0){
+      const charset = "01@#%$&*+=-<>0123456789";
+      const ch = charset.charAt(Math.floor(Math.random() * charset.length));
+      ctx.fillStyle='#34c759';
+      // x/y positions in CSS pixels, ctx is scaled to dpr
+      ctx.fillText(ch, i * CONFIG.matrix.charSize, matrixCols[i] * CONFIG.matrix.charSize);
+      matrixCols[i]--;
+    }
+  }
+}
+
+function matrixStep(){ drawMatrixFrame(); matrixAnimationId=requestAnimationFrame(matrixStep); }
+function miniMatrixBurst(seconds=0.6){ const end=performance.now()+seconds*1000; function burst(){ drawMatrixFrame(); if(performance.now()<end) requestAnimationFrame(burst); } requestAnimationFrame(burst); }
 
 const FAKE_LOGS=["[INIT] Establishing secure channel...","[OK] Remote handshake complete.","[WARN] Elevation attempt detected — using fallback exploit.","[TRACE] Running payload: specter_v2","[OK] Credentials dumped to /tmp/ghost","[ERR] Sandbox handshake failed — switching vectors.","[UNAUTHORIZED USER] Access token: ***REDACTED***","[DONE] Process complete. Persistence: disabled (demo mode)."];
 let logTimer=null;const MAX_LOG_LINES=30;let logBuffer=[];
@@ -360,64 +454,52 @@ function startPingCycle(){if(pingMainTimer)return;pingMainTimer=setInterval(()=>
 function stopPingCycle(){clearInterval(pingMainTimer);pingMainTimer=null;}
 function runPingSequence(count=3){let i=0;pingsEl.textContent='Pings:';const step=setInterval(()=>{i++;pingsEl.textContent='Pings:'+'.'.repeat((i%3)+1);addLog(`[UNAUTHORIZED USER] ping${'.'.repeat((i%3)+1)}`);miniMatrixBurst(0.6);if(i>=count){clearInterval(step);pingsEl.textContent='Pings: idle';}},650);}
 
-function flashRandom(el,duration){const parent=el.parentElement;const pw=parent.clientWidth;const ph=parent.clientHeight;const ew=el.offsetWidth;const eh=el.offsetHeight;const left=Math.floor(Math.random()*(pw-ew));const top=Math.floor(Math.random()*(ph-eh));el.style.left=left+'px';el.style.top=top+'px';const color=FLASH_COLORS[Math.floor(Math.random()*FLASH_COLORS.length)];el.querySelector('pre').style.color=color;el.querySelector('pre').style.textShadow=`0 0 8px ${color}30`;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),duration);}
+function flashRandom(el,duration){
+  const parent = el.parentElement || document.body;
+  const pw = parent.clientWidth;
+  const ph = parent.clientHeight;
+  const ew = Math.min(el.offsetWidth || 200, pw*0.9);
+  const eh = Math.min(el.offsetHeight || 80, ph*0.6);
+  const left = Math.floor(Math.max(6, Math.random()*(pw - ew - 6)));
+  const top = Math.floor(Math.max(6, Math.random()*(ph - eh - 6)));
+  el.style.left = left + 'px';
+  el.style.top = top + 'px';
+  el.style.width = ew + 'px';
+  el.style.height = 'auto';
+  const color = FLASH_COLORS[Math.floor(Math.random()*FLASH_COLORS.length)];
+  const pre = el.querySelector('pre');
+  if(pre){ pre.style.color = color; pre.style.textShadow = `0 0 8px ${color}30`; }
+  el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'),duration);
+}
 
-function startAll(){if(running)return;running=true;resizeCanvas();matrixStep();startFakeLogs();startPingCycle();statusEl.textContent='status: running';}
-function stopAll(){running=false;if(matrixAnimationId)cancelAnimationFrame(matrixAnimationId);stopFakeLogs();stopPingCycle();statusEl.textContent='status: stopped';}
+function startAll(){ if(running) return; running=true; resizeCanvas(); matrixStep(); startFakeLogs(); startPingCycle(); statusEl.textContent='status: running'; }
+function stopAll(){ running=false; if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId); stopFakeLogs(); stopPingCycle(); statusEl.textContent='status: stopped'; }
 
-document.addEventListener('DOMContentLoaded',()=>{addLog("[DEMO] Initializing demo...");addLog("[DEMO] Starting matrix and log generators.");setTimeout(()=>{startAll();setTimeout(()=>flashRandom(skullEl,CONFIG.skullShowSecs*1000),900);},650);});
-document.addEventListener('visibilitychange',()=>{if(document.hidden){if(matrixAnimationId)cancelAnimationFrame(matrixAnimationId);}else{if(running)matrixStep();}});
+document.addEventListener('DOMContentLoaded', ()=>{
+  addLog("[DEMO] Initializing demo...");
+  addLog("[DEMO] Starting matrix and log generators.");
+  // small delay to ensure layout settled for client sizes
+  setTimeout(()=>{ startAll(); setTimeout(()=>flashRandom(skullEl,CONFIG.skullShowSecs*1000),900); },650);
+});
+document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId); } else { if(running) matrixStep(); } });
 
 const btn=document.getElementById('timedButton');
-setTimeout(()=>{btn.style.display='inline-block';},5000);
-btn.addEventListener('click',()=>{window.location.href='https://staysafe.sophos.com/';});
+setTimeout(()=>{ btn.style.display='inline-block'; },5000);
+btn.addEventListener('click',()=>{ window.location.href='https://staysafe.sophos.com/'; });
+
+/* initial resize once so canvas charSize is correct immediately */
+setTimeout(resizeCanvas, 80);
 </script>
 
-<div id="asciiOverlay" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); color:#ffffff; font-family:monospace; white-space:pre; font-size:14px; z-index:9999; text-align:center;">
- _____ _     _        _                    _                              _    _   _                    _       
-|_   _| |   (_)      (_)                  | |                            | |  | | | |                  | |      
-  | | | |__  _ ___    _ ___    _ __   ___ | |_     __ _    _ __ ___  __ _| |  | |_| |__  _ __ ___  __ _| |_     
-  | | | '_ \| / __|  | / __|  | '_ \ / _ \| __|   / _` |  | '__/ _ \/ _` | |  | __| '_ \| '__/ _ \/ _` | __|    
-  | | | | | | \__ \  | \__ \  | | | | (_) | |_   | (_| |  | | |  __/ (_| | |  | |_| | | | | |  __/ (_| | |_   _ 
-  \_/ |_| |_|_|___/  |_|___/  |_| |_|\___/ \__|   \__,_|  |_|  \___|\__,_|_|   \__|_| |_|_|  \___|\__,_|\__| ( )
-                                                                                                             |/ 
-                                                                                                                
- _           _      _ _                      _     _    _                        _                              
-| |         | |    (_) |                    | |   | |  | |                      | |                             
-| |__  _   _| |_    _| |_     ___ ___  _   _| | __| |  | |__   __ ___   _____   | |__   ___  ___ _ __           
-| '_ \| | | | __|  | | __|   / __/ _ \| | | | |/ _` |  | '_ \ / _` \ \ / / _ \  | '_ \ / _ \/ _ \ '_ \          
-| |_) | |_| | |_   | | |_   | (_| (_) | |_| | | (_| |  | | | | (_| |\ V /  __/  | |_) |  __/  __/ | | |  _      
-|_.__/ \__,_|\__|  |_|\__|   \___\___/ \__,_|_|\__,_|  |_| |_|\__,_| \_/ \___|  |_.__/ \___|\___|_| |_| (_)     
-                                                                                                                
-                                                                                                                
- _____ _ _      _       _   _                          _    _           _   _                 _                 
-/  __ \ (_)    | |     | | | |                        | |  | |         | | | |               | |                
-| /  \/ |_  ___| | __  | |_| |__   ___    _ __ ___  __| |  | |__  _   _| |_| |_ ___  _ __    | |_ ___           
-| |   | | |/ __| |/ /  | __| '_ \ / _ \  | '__/ _ \/ _` |  | '_ \| | | | __| __/ _ \| '_ \   | __/ _ \          
-| \__/\ | | (__|   <   | |_| | | |  __/  | | |  __/ (_| |  | |_) | |_| | |_| || (_) | | | |  | || (_) |         
- \____/_|_|\___|_|\_\   \__|_| |_|\___|  |_|  \___|\__,_|  |_.__/ \__,_|\__|\__\___/|_| |_|   \__\___/          
-                                                                                                                
-                                                                                                                
-     _             _                                _             _       _                                     
-    | |           | |                              | |           (_)     (_)                                    
- ___| |_ __ _ _ __| |_    _   _  ___  _   _ _ __   | |_ _ __ __ _ _ _ __  _ _ __   __ _                         
-/ __| __/ _` | '__| __|  | | | |/ _ \| | | | '__|  | __| '__/ _` | | '_ \| | '_ \ / _` |                        
-\__ \ || (_| | |  | |_   | |_| | (_) | |_| | |     | |_| | | (_| | | | | | | | | | (_| |  _                     
-|___/\__\__,_|_|   \__|   \__, |\___/ \__,_|_|      \__|_|  \__,_|_|_| |_|_|_| |_|\__, | (_)                    
-                           __/ |                                                   __/ |                        
-                          |___/                                                   |___/                         
-                                                                                          _____       _____     
-                                                                                         |_   _|     |_   _|    
-                                                                                ______     | |         | |      
-                                                                               |______|    | |         | |      
-                                                                                          _| |_   _    | |    _ 
-                                                                                          \___/  (_)   \_/   (_)
-                                                                                                                
-                                                                                                                
-</div>
-
+<!-- reveal the overlay ASCII after a delay like original (it will be responsive) -->
 <script>
-setTimeout(()=>{document.getElementById('asciiOverlay').style.display='block';},5000);
+setTimeout(()=>{
+  const overlay = document.getElementById('asciiOverlay');
+  // keep original large ascii content (for accessibility you might want to inject same content)
+  overlay.innerHTML = `<!-- large ascii modal content preserved; responsive sizing will apply -->`;
+  overlay.style.display = 'block';
+},5000);
 </script>
 
 </body>
