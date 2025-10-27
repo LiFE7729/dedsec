@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DeadSec HACK :(</title>
+<style>
+  :root{
+    --bg:#020202;
+    --text:#d7eedd;
+    --green:#30d158;
+    --accent:#ff3b30;
+    --muted:#7f8b83;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Consolas, "Courier New", monospace}
+  .wrap{display:flex;flex-direction:column;height:100%}
+  .topbar{padding:10px 14px;display:flex;align-items:center;gap:12px}
+  .title{font-weight:700;color:var(--accent);letter-spacing:1px}
+  .status{margin-left:auto;color:var(--muted);font-size:13px}
+  .main{flex:1;display:flex;gap:12px;padding:12px;box-sizing:border-box}
+  .left{flex:1;position:relative;background:rgba(255,255,255,0.02);border-radius:6px;overflow:hidden}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .overlay{position:relative;z-index:2;padding:10px;height:100%;box-sizing:border-box;pointer-events:none}
+  .banner-area{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column}
+  pre.ascii{font-family:Consolas,monaco,monospace;white-space:pre;line-height:1;margin:0;padding:0;color:var(--accent);text-shadow:0 0 6px rgba(255,59,48,0.15)}
+  .right{width:360px;min-width:240px;display:flex;flex-direction:column;gap:10px}
+  .panel{background:rgba(255,255,255,0.02);padding:10px;border-radius:6px;overflow:auto;height:100%}
+  .log{white-space:pre-wrap;line-height:1.25;font-size:13px;color:#dfeee5;overflow-y:auto}
+  .pings{font-size:13px;color:var(--green)}
+  .small{font-size:12px;color:var(--muted)}
+  /* skull/banner flash (center overlay) */
+  .flash{position:absolute;z-index:5;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.22s ease}
+  .flash.visible{opacity:1}
+  .flash pre{color:#ff3b30;text-shadow:0 0 8px rgba(255,59,48,0.18)}
+
+body, html {
+  cursor: none; /* hides the mouse pointer */
+}
+
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+  <div class="topbar">
+    <div class="title">YOU'VE BEEN HACKED</div>
+    <div class="small">--watch where you click--</div>
+    <div class="status" id="status">status: running</div>
+  </div>
+
+  <div class="main">
+    <div class="left" aria-live="polite">
+      <canvas id="matrix"></canvas>
+
+      <div class="overlay">
+        <div class="banner-area" id="bannerArea">
+          <!-- Centered banner placeholder -->
+        </div>
+      </div>
+
+      <!-- skull and ascii banner overlays -->
+      <div class="flash" id="skull">
+<pre>
+                                                                                          
+                                        #                                                 
+                                     @&/ &@@@@@@@@  #. / *                                
+                               &@@@@@@@@@@@@@@@@@@@@@@@@@@@#                              
+                           @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*                        
+                        @@@@@@@@@@@@@@  &    @ *, ,  @.@@@@@@@@@@@&@.                     
+                     &@@@@@@@@@@ ,           @            &@@@@@@@@@@%                    
+                   ,@@@@@@@@                                  @@@@@@@@@@(                 
+                  @@@@@@@@*                                     &@@@@@@@@@ @              
+                 @@@@@@@                                          #@@@@@@@ @              
+                @@@@@@@                                             @@@@@@@%              
+               @@@@@@/                              &                @@@@@@@@             
+              .@@@@@@.                           *.@@@ &/             @@@@@@,             
+              @@@@@@          @@@@@@@@         .@@@@@@@@@@@           @@@@@@@             
+             #@@@@@@     ,%@@@@@@@@@@@@&      #@@@@@@@@@@@@@@@       , @@@@@@@            
+              @@@@@@     @@@@@@@@@@@@@@@    &*@@@@@@@@@@@@@@@@#   #@,  @@@@@@.            
+              @@@@@@&   @@@@@@@@@@@@@@@@@   ( @@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@             
+             . @@@@@  ,@@@@@@@@@@@@@@@@@.     &@@@@@@@@@@@@@@@@@ &@@@@@@@@@@@*            
+             @ @@@@@@@@@@@@@@@@@@@@@@@@@        *@@@@@@@@@@@@@@,  @@@@@@@@@@              
+                @@@@@@@@@@@@@@@@@@@@@@            @@@@@@@@@@@#.     @@@@@@@               
+                %&@@@@@@@.&*@@@@@@@.                , /@&@@          @@@@@@/              
+                   @@@@@@#  @                            @@         ,&@@@@@@.             
+                   @@@@@@               /                .**    .  *@@@@@@@               
+                  @@@@@@         @#   /. *      @&    % @@@@@  @@@@@@@@@@#,               
+                 &@@@@@@   @#  @@@@   @@@@@  ,@@@@@@    @@@@@@@@@@@@@@@&@                 
+                #&@@@@@@@@@# @,@@@@@ @@@@@@@  @@@@@@@   @@@@@@@@@@@@ . .@                 
+                 @&@@@@@@@@@@@@@@@@@@ @@@@@@   @@@@@@   @@@@@@@@        @                 
+                     @@ @@@@@@@@@@@@@%@@@@@@. #@@@@@@   (@@@@@@@        %                 
+                     @      / ,@@@@@@#(@@@@@@ ,,@@@@@@.  @@@@@%                           
+  %                  @          @@@@@&#@@@@@@@@@@@@@@@@@@@@@@@@                           
+  .                            .@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                           
+  *                            , @@@@@@@@@@,  @*@/@@@@@@@% @,/ @@                         
+                                  %.@         #*   @       @                              
+  (                               @#@              @       @                              
+  .                                                @                                      
+  .                                               ,@                                      
+</pre>
+      </div>
+      <div class="flash" id="asciiBanner">
+<pre>
+ ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▓█████ ▓█████▄ 
+▓██░ ██▒▒████▄    ▒██▀ ▀█   ██▄█▒ ▓█   ▀ ▒██▀ ██▌
+▒██▀▀██░▒██  ▀█▄  ▒▓█    ▄ ▓███▄░ ▒███   ░██   █▌
+░▓█ ░██ ░██▄▄▄▄██ ▒▓▓▄ ▄██▒▓██ █▄ ▒▓█  ▄ ░▓█▄   ▌
+░▓█▒░██▓ ▓█   ▓██▒▒ ▓███▀ ░▒██▒ █▄░▒████▒░▒████▓ 
+ ▒ ░░▒░▒ ▒▒   ▓▒█░░ ░▒ ▒  ░▒ ▒▒ ▓▒░░ ▒░ ░ ▒▒▓  ▒ 
+ ▒ ░▒░ ░  ▒   ▒▒ ░  ░  ▒   ░ ░▒ ▒░ ░ ░  ░ ░ ▒  ▒ 
+ ░  ░░ ░  ░   ▒   ░        ░ ░░ ░    ░    ░ ░  ░ 
+ ░  ░  ░      ░  ░░ ░      ░  ░      ░  ░   ░    
+                  ░                       ░      
+</pre>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="panel" style="flex:1">
+        <div id="logs" class="log" aria-live="polite"></div>
+      </div>
+      <div class="panel" style="height:86px;display:flex;flex-direction:column;justify-content:space-between">
+        <div class="pings" id="pings">Pings: idle</div>
+        <div class="small">--you really should be more careful--</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- CONFIG ---------- */
+const CONFIG = {
+  matrix: { fps: 30, charSize: 14, chance: 0.96 },
+  fakeLogRateMs: [220, 500],
+  pingIntervalMs: 9000,
+  pingCount: 3,
+  skullShowSecs: 2.2,
+  skullChanceEachCycle: 0.5,
+  autoStart: true
+};
+
+const FLASH_COLORS = ['#ff3b30','#30d158','#0a84ff']; // red, green, blue
+
+/* ---------- ELEMENTS ---------- */
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+const logsEl = document.getElementById('logs');
+const pingsEl = document.getElementById('pings');
+const skullEl = document.getElementById('skull');
+const asciiBannerEl = document.getElementById('asciiBanner');
+const statusEl = document.getElementById('status');
+
+let matrixAnimationId = null;
+let matrixCols = [];
+let colCount = 0;
+let running = false;
+
+function randBetween([min,max]){return Math.floor(min + Math.random()*(max-min));}
+
+/* ---------- MATRIX ---------- */
+function resizeCanvas(){
+  canvas.width = canvas.clientWidth;
+  canvas.height = canvas.clientHeight;
+  colCount = Math.max(2, Math.floor(canvas.width/CONFIG.matrix.charSize));
+  matrixCols = new Array(colCount).fill(0);
+}
+window.addEventListener('resize', resizeCanvas);
+
+function drawMatrixFrame(){
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle='rgba(0,0,0,0.2)';
+  ctx.fillRect(0,0,w,h);
+  ctx.font=CONFIG.matrix.charSize+'px monospace';
+  for(let i=0;i<colCount;i++){
+    if(matrixCols[i]===0 && Math.random()>CONFIG.matrix.chance){
+      matrixCols[i]=Math.floor(1+Math.random()*(h/CONFIG.matrix.charSize));
+    }
+    if(matrixCols[i]>0){
+      const ch = "01@#%$&*+=-<>0123456789".charAt(Math.floor(Math.random()*22));
+      ctx.fillStyle='#34c759';
+      ctx.fillText(ch,i*CONFIG.matrix.charSize,matrixCols[i]*CONFIG.matrix.charSize);
+      matrixCols[i]--;
+    }
+  }
+}
+function matrixStep(){ drawMatrixFrame(); matrixAnimationId=requestAnimationFrame(matrixStep); }
+
+function miniMatrixBurst(seconds=0.6){
+  const end=performance.now()+seconds*1000;
+  function burst(){
+    drawMatrixFrame();
+    if(performance.now()<end) requestAnimationFrame(burst);
+  }
+  requestAnimationFrame(burst);
+}
+
+/* ---------- LOGS ---------- */
+const FAKE_LOGS=[
+  "[INIT] Establishing secure channel...",
+  "[OK] Remote handshake complete.",
+  "[WARN] Elevation attempt detected — using fallback exploit.",
+  "[TRACE] Running payload: specter_v2",
+  "[OK] Credentials dumped to /tmp/ghost",
+  "[ERR] Sandbox handshake failed — switching vectors.",
+  "[UNAUTHORIZED USER] Access token: ***REDACTED***",
+  "[DONE] Process complete. Persistence: disabled (demo mode)."
+];
+
+let logTimer=null;
+const MAX_LOG_LINES = 30; // adjust to fit the panel height
+let logBuffer = [];
+
+function addLog(msg, color) {
+  const ts = new Date().toLocaleTimeString();
+  logBuffer.push(`${ts} ${msg}`);
+
+  if (logBuffer.length > MAX_LOG_LINES) {
+    logBuffer.shift(); // remove oldest log
+  }
+
+  logsEl.textContent = logBuffer.join('\n');
+  logsEl.scrollTop = logsEl.scrollHeight; // ensures newest lines are visible at bottom
+}
+
+function startFakeLogs(){if(logTimer)return;function scheduleNext(){const ms=randBetween(CONFIG.fakeLogRateMs);logTimer=setTimeout(()=>{addLog(FAKE_LOGS[Math.floor(Math.random()*FAKE_LOGS.length)]);scheduleNext();},ms);}scheduleNext();}
+function stopFakeLogs(){clearTimeout(logTimer);logTimer=null;}
+
+/* ---------- PINGS ---------- */
+let pingMainTimer=null;
+function startPingCycle(){if(pingMainTimer)return;pingMainTimer=setInterval(()=>{runPingSequence(CONFIG.pingCount); if(Math.random()<CONFIG.skullChanceEachCycle){flashRandom(skullEl,CONFIG.skullShowSecs*1000);} if(Math.random()<CONFIG.skullChanceEachCycle){flashRandom(asciiBannerEl,CONFIG.skullShowSecs*1000);}},CONFIG.pingIntervalMs);}
+function stopPingCycle(){clearInterval(pingMainTimer); pingMainTimer=null;}
+function runPingSequence(count=3){let i=0;pingsEl.textContent='Pings:';const pingStep=setInterval(()=>{i++;pingsEl.textContent='Pings:'+'.'.repeat((i%3)+1);addLog(`[UNAUTHORIZED USER] ping${'.'.repeat((i%3)+1)}`); miniMatrixBurst(0.6);if(i>=count){clearInterval(pingStep);pingsEl.textContent='Pings: idle';}},650);}
+
+/* ---------- RANDOM FLASH ---------- */
+function flashRandom(el,duration){
+  const parent = el.parentElement;
+  const pw = parent.clientWidth;
+  const ph = parent.clientHeight;
+  const ew = el.offsetWidth;
+  const eh = el.offsetHeight;
+  const left = Math.floor(Math.random()*(pw-ew));
+  const top = Math.floor(Math.random()*(ph-eh));
+  el.style.left = left+'px';
+  el.style.top = top+'px';
+
+  // pick a random color for this flash
+  const color = FLASH_COLORS[Math.floor(Math.random()*FLASH_COLORS.length)];
+  el.querySelector('pre').style.color = color;
+  el.querySelector('pre').style.textShadow = `0 0 8px ${color}30`;
+
+  el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'), duration);
+}
+
+/* ---------- START / STOP ---------- */
+function startAll(){
+  if(running)return;
+  running=true;
+  resizeCanvas();
+  matrixStep();
+  startFakeLogs();
+  startPingCycle();
+  statusEl.textContent='status: running';
+}
+function stopAll(){
+  running=false;
+  if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId);
+  stopFakeLogs();
+  stopPingCycle();
+  statusEl.textContent='status: stopped';
+}
+
+/* ---------- BOOT ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  addLog("[DEMO] Initializing demo...");
+  addLog("[DEMO] Starting matrix and log generators.");
+  setTimeout(()=>{startAll(); setTimeout(()=>flashRandom(skullEl,CONFIG.skullShowSecs*1000),900);},650);
+});
+document.addEventListener('visibilitychange', ()=>{if(document.hidden){if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId);}else{if(running) matrixStep();}});
+</script>
+</body>
+</html>
