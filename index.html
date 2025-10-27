@@ -33,9 +33,7 @@
   .flash.visible{opacity:1}
   .flash pre{color:#ff3b30;text-shadow:0 0 8px rgba(255,59,48,0.18)}
 
-body, html {
-  cursor: none; /* hides the mouse pointer */
-}
+
 
 </style>
 </head>
@@ -118,10 +116,27 @@ body, html {
       <div class="panel" style="flex:1">
         <div id="logs" class="log" aria-live="polite"></div>
       </div>
-      <div class="panel" style="height:86px;display:flex;flex-direction:column;justify-content:space-between">
-        <div class="pings" id="pings">Pings: idle</div>
-        <div class="small">--you really should be more careful--</div>
-      </div>
+<div class="panel" style="height:86px; display:flex; flex-direction:column; justify-content:space-between">
+  <div class="pings" id="pings">Pings: idle</div>
+
+<button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer;">
+  CLICK HERE TO CLOSE THIS SCREEN
+</button>
+
+<script>
+  const btn = document.getElementById('timedButton');
+  setTimeout(() => {
+    btn.style.display = 'inline-block';
+  }, 5000);
+
+  btn.addEventListener('click', () => {
+    window.location.href = 'https://staysafe.sophos.com/?t=eyJhbGciOiJIUzI1NiJ9.eyJ0cmFja2luZ190b2tlbiI6IjYzN2RiYjYzLTMwNDEtNGYxZS05OTk1LTI5YmVjYjk5NmIwZCIsImNlbGwiOiJodHRwczovLzIxZzZqZnZoeTYuZXhlY3V0ZS1hcGkudXMtZWFzdC0yLmFtYXpvbmF3cy5jb20vcHJvZC9hcGkvcGhpc2hpbmdjYW1wYWlnbiIsImNhbXBhaWduX3Rva2VuIjoiYjYyNjFkNDctOGFhYi00NTU5LTlkZTktMGM4MDlhMDQ3NGRlIiwic2VsZWN0ZWRfYXR0YWNrX3Rva2VuIjoiYjNjYzBkNDUtMmYyMi00N2NiLTljOTEtNDkyOGVlN2Y0NDVjIiwidGVzdF90b2tlbiI6dHJ1ZSwiZXh0ZXJuYWxfdHJhaW5pbmciOmZhbHNlLCJkaXJlY3RfZGVsaXZlcnkiOmZhbHNlLCJpYXQiOjE3NjE1ODYyOTEsImlzcyI6Imh0dHBzOi8vYXBwLnBoaXNodGhyZWF0LmNvbSIsImV4cCI6MTc2OTM2MjI5MX0.HeArwWasSyvJQ6IbfVOirYGV7CrfjzR1rkATLQOiTCI';
+  });
+</script>
+
+
+  <div class="small">--you really should be more careful--</div>
+</div>
     </div>
   </div>
 </div>
@@ -277,5 +292,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 document.addEventListener('visibilitychange', ()=>{if(document.hidden){if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId);}else{if(running) matrixStep();}});
 </script>
+<script>
+  // Show the button after 10 seconds
+  setTimeout(() => {
+    const btn = document.getElementById('timedButton');
+    if(btn) btn.style.display = 'inline-block';
+  }, 10000); // 10000ms = 10 seconds
+</script>
+
 </body>
 </html>
