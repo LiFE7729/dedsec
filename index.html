@@ -12,36 +12,167 @@
     --accent:#ff3b30;
     --muted:#7f8b83;
   }
-  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Consolas, "Courier New", monospace}
-  .wrap{display:flex;flex-direction:column;height:100%}
-  .topbar{padding:10px 14px;display:flex;align-items:center;gap:12px}
-  .title{font-weight:700;color:var(--accent);letter-spacing:1px}
-  .status{margin-left:auto;color:var(--muted);font-size:13px}
-  .main{flex:1;display:flex;gap:12px;padding:12px;box-sizing:border-box}
-  .left{flex:1;position:relative;background:rgba(255,255,255,0.02);border-radius:6px;overflow:hidden}
-  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-  .overlay{position:relative;z-index:2;padding:10px;height:100%;box-sizing:border-box;pointer-events:none}
-  .banner-area{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column}
-  pre.ascii{font-family:Consolas,monaco,monospace;white-space:pre;line-height:1;margin:0;padding:0;color:var(--accent);text-shadow:0 0 6px rgba(255,59,48,0.15)}
-  .right{width:360px;min-width:240px;display:flex;flex-direction:column;gap:10px}
-  .panel{background:rgba(255,255,255,0.02);padding:10px;border-radius:6px;overflow:auto;height:100%}
-  .log{white-space:pre-wrap;line-height:1.25;font-size:13px;color:#dfeee5;overflow-y:auto}
-  .pings{font-size:13px;color:var(--green)}
-  .small{font-size:12px;color:var(--muted)}
+
+  html,body{
+    height:100%;
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Consolas, "Courier New", monospace;
+  }
+
+  .wrap{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+
+  /* ---------- TOPBAR ---------- */
+  .topbar{
+    padding:10px 14px;
+    display:flex;
+    align-items:center;        /* vertical center */
+    justify-content:center;    /* horizontal center */
+    position:relative;         /* allow status to stay on right */
+    gap:0;                     /* remove flex gap for centered text */
+  }
+
+  .topbar .title {
+    text-align:center;
+    display:block;
+    line-height:1.2;
+    color: red;               /* <-- title is red now */
+  }
+
+  .topbar .small {
+    text-align:center;
+    display:block;
+    line-height:1.2;
+    color: var(--muted);       /* stays gray */
+  }
+
+  .topbar .status{
+    position:absolute;         /* keep it on the far right */
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .main{
+    flex:1;
+    display:flex;
+    gap:12px;
+    padding:12px;
+    box-sizing:border-box;
+  }
+
+  .left{
+    flex:1;
+    position:relative;
+    background:rgba(255,255,255,0.02);
+    border-radius:6px;
+    overflow:hidden;
+  }
+
+  canvas{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  .overlay{
+    position:relative;
+    z-index:2;
+    padding:10px;
+    height:100%;
+    box-sizing:border-box;
+    pointer-events:none;
+  }
+
+  .banner-area{
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+  }
+
+  pre.ascii{
+    font-family:Consolas,monaco,monospace;
+    white-space:pre;
+    line-height:1;
+    margin:0;
+    padding:0;
+    color:var(--accent);
+    text-shadow:0 0 6px rgba(255,59,48,0.15);
+  }
+
+  .right{
+    width:360px;
+    min-width:240px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
+  .panel{
+    background:rgba(255,255,255,0.02);
+    padding:10px;
+    border-radius:6px;
+    overflow:auto;
+    height:100%;
+  }
+
+  .log{
+    white-space:pre-wrap;
+    line-height:1.25;
+    font-size:13px;
+    color:#dfeee5;
+    overflow-y:auto;
+  }
+
+  .pings{
+    font-size:13px;
+    color:var(--green);
+  }
+
+  .small{
+    font-size:12px;
+    color:var(--muted);
+  }
+
   /* skull/banner flash (center overlay) */
-  .flash{position:absolute;z-index:5;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.22s ease}
-  .flash.visible{opacity:1}
-  .flash pre{color:#ff3b30;text-shadow:0 0 8px rgba(255,59,48,0.18)}
+  .flash{
+    position:absolute;
+    z-index:5;
+    pointer-events:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transition:opacity 0.22s ease;
+  }
 
+  .flash.visible{
+    opacity:1;
+  }
 
-
+  .flash pre{
+    color:#ff3b30;
+    text-shadow:0 0 8px rgba(255,59,48,0.18);
+  }
 </style>
+
 </head>
 <body>
 <div class="wrap" id="wrap">
   <div class="topbar">
-    <div class="title">YOU'VE BEEN HACKED</div>
-    <div class="small">--watch where you click--</div>
+    <div class="title">YOU'VE BEEN HACKED </div>
+    <div class="small"> --watch where you click--</div>
     <div class="status" id="status">status: running</div>
   </div>
 
@@ -54,6 +185,7 @@
           <!-- Centered banner placeholder -->
         </div>
       </div>
+
 
       <!-- skull and ascii banner overlays -->
       <div class="flash" id="skull">
@@ -119,9 +251,10 @@
 <div class="panel" style="height:86px; display:flex; flex-direction:column; justify-content:space-between">
   <div class="pings" id="pings">Pings: idle</div>
 
-<button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer;">
-  CLICK HERE TO CLOSE THIS SCREEN
+<button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer; background-color:red; color:black; border:none; -webkit-appearance:none; appearance:none;">
+  CLICK HERE TO START YOUR MANDATORY TRAINING
 </button>
+
 
 <script>
   const btn = document.getElementById('timedButton');
@@ -135,7 +268,7 @@
 </script>
 
 
-  <div class="small">--you really should be more careful--</div>
+  <div class="small">--This was a simulated phish threat--</div>
 </div>
     </div>
   </div>
@@ -292,12 +425,73 @@ document.addEventListener('DOMContentLoaded', ()=>{
 });
 document.addEventListener('visibilitychange', ()=>{if(document.hidden){if(matrixAnimationId) cancelAnimationFrame(matrixAnimationId);}else{if(running) matrixStep();}});
 </script>
+
 <script>
-  // Show the button after 10 seconds
+document.addEventListener('DOMContentLoaded', () => {
+    // existing startup code
+    startAll();
+    setTimeout(flashSkull, 900);
+</script>
+
+<script>
+  // BUTTON TIMER
   setTimeout(() => {
     const btn = document.getElementById('timedButton');
     if(btn) btn.style.display = 'inline-block';
-  }, 10000); // 10000ms = 10 seconds
+  }, 2000); // 2000ms = 2 seconds
+</script>
+
+<!-- Put this at the bottom of your <body> -->
+<div id="asciiOverlay" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); color:#ffffff; font-family:monospace; white-space:pre; font-size:14px; z-index:9999; text-align:center;">
+
+ _____ _     _        _                    _                              _    _   _                    _       
+|_   _| |   (_)      (_)                  | |                            | |  | | | |                  | |      
+  | | | |__  _ ___    _ ___    _ __   ___ | |_     __ _    _ __ ___  __ _| |  | |_| |__  _ __ ___  __ _| |_     
+  | | | '_ \| / __|  | / __|  | '_ \ / _ \| __|   / _` |  | '__/ _ \/ _` | |  | __| '_ \| '__/ _ \/ _` | __|    
+  | | | | | | \__ \  | \__ \  | | | | (_) | |_   | (_| |  | | |  __/ (_| | |  | |_| | | | | |  __/ (_| | |_   _ 
+  \_/ |_| |_|_|___/  |_|___/  |_| |_|\___/ \__|   \__,_|  |_|  \___|\__,_|_|   \__|_| |_|_|  \___|\__,_|\__| ( )
+                                                                                                             |/ 
+                                                                                                                
+ _           _      _ _                      _     _    _                        _                              
+| |         | |    (_) |                    | |   | |  | |                      | |                             
+| |__  _   _| |_    _| |_     ___ ___  _   _| | __| |  | |__   __ ___   _____   | |__   ___  ___ _ __           
+| '_ \| | | | __|  | | __|   / __/ _ \| | | | |/ _` |  | '_ \ / _` \ \ / / _ \  | '_ \ / _ \/ _ \ '_ \          
+| |_) | |_| | |_   | | |_   | (_| (_) | |_| | | (_| |  | | | | (_| |\ V /  __/  | |_) |  __/  __/ | | |  _      
+|_.__/ \__,_|\__|  |_|\__|   \___\___/ \__,_|_|\__,_|  |_| |_|\__,_| \_/ \___|  |_.__/ \___|\___|_| |_| (_)     
+                                                                                                                
+                                                                                                                
+ _____ _ _      _       _   _                          _    _           _   _                 _                 
+/  __ \ (_)    | |     | | | |                        | |  | |         | | | |               | |                
+| /  \/ |_  ___| | __  | |_| |__   ___    _ __ ___  __| |  | |__  _   _| |_| |_ ___  _ __    | |_ ___           
+| |   | | |/ __| |/ /  | __| '_ \ / _ \  | '__/ _ \/ _` |  | '_ \| | | | __| __/ _ \| '_ \   | __/ _ \          
+| \__/\ | | (__|   <   | |_| | | |  __/  | | |  __/ (_| |  | |_) | |_| | |_| || (_) | | | |  | || (_) |         
+ \____/_|_|\___|_|\_\   \__|_| |_|\___|  |_|  \___|\__,_|  |_.__/ \__,_|\__|\__\___/|_| |_|   \__\___/          
+                                                                                                                
+                                                                                                                
+     _             _                                _             _       _                                     
+    | |           | |                              | |           (_)     (_)                                    
+ ___| |_ __ _ _ __| |_    _   _  ___  _   _ _ __   | |_ _ __ __ _ _ _ __  _ _ __   __ _                         
+/ __| __/ _` | '__| __|  | | | |/ _ \| | | | '__|  | __| '__/ _` | | '_ \| | '_ \ / _` |                        
+\__ \ || (_| | |  | |_   | |_| | (_) | |_| | |     | |_| | | (_| | | | | | | | | | (_| |  _                     
+|___/\__\__,_|_|   \__|   \__, |\___/ \__,_|_|      \__|_|  \__,_|_|_| |_|_|_| |_|\__, | (_)                    
+                           __/ |                                                   __/ |                        
+                          |___/                                                   |___/                         
+                                                                                          _____       _____     
+                                                                                         |_   _|     |_   _|    
+                                                                                ______     | |         | |      
+                                                                               |______|    | |         | |      
+                                                                                          _| |_   _    | |    _ 
+                                                                                          \___/  (_)   \_/   (_)
+                                                                                                                
+                                                                                                                
+
+</div>
+
+<script>
+  setTimeout(() => {
+    const overlay = document.getElementById('asciiOverlay');
+    overlay.style.display = 'block';
+  }, 5000); // 5000ms = 5 seconds
 </script>
 
 </body>
