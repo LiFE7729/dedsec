@@ -132,32 +132,32 @@
   .pings { font-size:13px; color:var(--green); }
   .small { font-size:12px; color:var(--muted); }
 
-  /* ---------- BOTTOM ASCII OVERLAY ---------- */
-  #asciiOverlay {
-    position:fixed;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    color:var(--accent);
-    font-family:Consolas,monaco,monospace;
-    white-space:pre;
-    text-align:center;
-    text-shadow:0 0 6px rgba(255,59,48,0.15);
-    font-size:clamp(6px,1.8vw,16px);
-    line-height:1;
-    z-index:9999;
-    pointer-events:none;
-    max-width:95vw;
-    overflow-x:auto;
-    padding:10px;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    background:transparent;
-    opacity:0;
-    animation: fadeIn 2s ease forwards, flickerLoop 6s infinite;
-    animation-delay: 1s, 3s;
-  }
+/* ---------- BOTTOM ASCII OVERLAY (responsive, unclipped) ---------- */
+#asciiOverlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--accent);
+  font-family: Consolas, monaco, monospace;
+  white-space: pre;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(255,59,48,0.15);
+  font-size: clamp(6px, 1.5vw, 14px); /* slightly smaller max to avoid clipping */
+  line-height: 1;
+  z-index: 9999;
+  pointer-events: none;
+  max-width: calc(100vw - 24px); /* leave a safe 12px margin on each side */
+  overflow-x: auto;
+  padding: 6px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards, flickerLoop 6s infinite;
+  animation-delay: 1s, 3s;
+}
 
   @keyframes fadeIn {
     from { opacity:0; }
@@ -173,24 +173,29 @@
     80% { opacity:0.9; filter:brightness(1.1); }
   }
 
-  /* ---------- MOBILE RESPONSIVE ADJUSTMENTS ---------- */
-  @media (max-width: 720px) {
-    .main { flex-direction:column; gap:10px; padding:10px; }
-    .right { width:100%; min-width:0; order:2; }
-    .left  { order:1; min-height:200px; }
+/* Mobile adjustments */
+@media (max-width: 720px) {
+  #asciiOverlay {
+    font-size: clamp(4px, 3vw, 12px);
+    max-width: calc(100vw - 16px);
+    padding: 4px;
+    overflow-x: hidden;
   }
+}
 
-  @media (max-width: 600px) {
-    #asciiOverlay pre.ascii {
-      font-size: clamp(3px, 2.2vw, 10px);
-      line-height: 1.05;
-      white-space: pre;
-    }
-    #asciiOverlay {
-      max-width: 95vw;
-      padding: 6px;
-      overflow-x: hidden;
-    }
+@media (max-width: 400px) {
+  #asciiOverlay {
+    font-size: clamp(3px, 2.2vw, 8px);
+    transform: translate(-50%, -50%) scale(0.95);
+    max-width: calc(100vw - 12px);
+  }
+}
+
+@media (max-height: 600px) {
+  #asciiOverlay {
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+}
 
     /* ---- TRUNCATE PANEL LOGS ON SMALL SCREENS ---- */
     .panel .log {
