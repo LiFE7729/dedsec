@@ -50,17 +50,21 @@
     gap:12px;
     padding:12px;
     box-sizing:border-box;
+    align-items:stretch;
   }
 
+  /* LEFT COLUMN (canvas + ascii flashes) */
   .left {
     flex:1;
     position:relative;
     background:rgba(255,255,255,0.02);
     border-radius:6px;
     overflow:hidden;
+    min-height:240px;
+    z-index:1;
   }
 
-  canvas { position:absolute; inset:0; width:100%; height:100%; }
+  canvas { position:absolute; inset:0; width:100%; height:100%; z-index:0; }
 
   .overlay {
     position:relative;
@@ -91,26 +95,6 @@
     font-size:clamp(6px,1.8vw,16px);
   }
 
-  .right {
-    width:360px;
-    min-width:240px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-
-  .panel {
-    background:rgba(255,255,255,0.02);
-    padding:10px;
-    border-radius:6px;
-    overflow:auto;
-  }
-
-  .log { white-space:pre-wrap; line-height:1.25; font-size:13px; color:#dfeee5; }
-
-  .pings { font-size:13px; color:var(--green); }
-  .small { font-size:12px; color:var(--muted); }
-
   .flash {
     position:absolute;
     z-index:5;
@@ -124,6 +108,29 @@
   }
 
   .flash.visible { opacity:1; }
+
+  /* RIGHT COLUMN (panels) */
+  .right {
+    width:360px;
+    min-width:220px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    z-index:0;
+  }
+
+  .panel {
+    background:rgba(255,255,255,0.02);
+    padding:10px;
+    border-radius:6px;
+    overflow:auto;
+    backdrop-filter: blur(0.5px);
+  }
+
+  .log { white-space:pre-wrap; line-height:1.25; font-size:13px; color:#dfeee5; }
+
+  .pings { font-size:13px; color:var(--green); }
+  .small { font-size:12px; color:var(--muted); }
 
   /* ---------- BOTTOM ASCII OVERLAY ---------- */
   #asciiOverlay {
@@ -139,6 +146,7 @@
     font-size:clamp(6px,1.8vw,16px);
     line-height:1;
     z-index:9999;
+    pointer-events:none;
     max-width:95vw;
     overflow-x:auto;
     padding:10px;
@@ -151,7 +159,6 @@
     animation-delay: 1s, 3s;
   }
 
-  /* ---------- FLICKER ANIMATIONS ---------- */
   @keyframes fadeIn {
     from { opacity:0; }
     to { opacity:1; }
@@ -166,51 +173,60 @@
     80% { opacity:0.9; filter:brightness(1.1); }
   }
 
-/* ---------- MOBILE FIX + VERTICAL CENTER FOR ASCII OVERLAY (NO SCROLL, NO WRAP) ---------- */
-@media (max-width: 600px) {
-  #asciiOverlay pre.ascii {
-    font-size: clamp(3px, 2vw, 8px);  /* smaller font for narrow screens */
-    line-height: 1.05;
-    white-space: pre;                 /* preserve ASCII structure */
+  /* ---------- MOBILE RESPONSIVE ADJUSTMENTS ---------- */
+  @media (max-width: 720px) {
+    .main { flex-direction:column; gap:10px; padding:10px; }
+    .right { width:100%; min-width:0; order:2; }
+    .left  { order:1; min-height:200px; }
   }
 
-  #asciiOverlay {
-    max-width: 95vw;       /* keep overlay inside viewport */
-    padding: 4px;          /* tighter padding */
-    overflow-x: hidden;    /* no horizontal scroll */
+  @media (max-width: 600px) {
+    #asciiOverlay pre.ascii {
+      font-size: clamp(3px, 2.2vw, 10px);
+      line-height: 1.05;
+      white-space: pre;
+    }
+    #asciiOverlay {
+      max-width: 95vw;
+      padding: 6px;
+      overflow-x: hidden;
+    }
+
+    /* ---- TRUNCATE PANEL LOGS ON SMALL SCREENS ---- */
+    .panel .log {
+      display: -webkit-box;
+      -webkit-line-clamp: 5;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-height: 6.5em;
+      line-height: 1.3;
+    }
+
+    .panel {
+      overflow: hidden;
+    }
   }
-}
 
-/* Further scale down on ultra-narrow screens (e.g. small phones) */
-@media (max-width: 400px) {
-  #asciiOverlay pre.ascii {
-    font-size: clamp(2px, 1.6vw, 6px); /* tiny font to guarantee full fit */
+  @media (max-width: 400px) {
+    #asciiOverlay pre.ascii {
+      font-size: clamp(2px, 1.6vw, 6px);
+    }
+    #asciiOverlay {
+      transform: translate(-50%, -50%) scale(0.92);
+      max-width:92vw;
+    }
   }
 
-  #asciiOverlay {
-    max-width: 92vw;  /* a little extra margin */
-    transform: translate(-50%, -50%) scale(0.9); /* gentle overall shrink */
+  @media (max-height: 600px) {
+    #asciiOverlay {
+      top:50%;
+      transform: translate(-50%,-50%) scale(0.85);
+    }
   }
-}
 
-/* Adjust vertical scaling on short or landscape screens */
-@media (max-height: 600px) {
-  #asciiOverlay {
-    top: 50%;
-    transform: translate(-50%, -50%) scale(0.85); /* slightly shrink vertically */
-  }
-}
-
-/* ---------- FIX STACKING ORDER (ENSURE OVERLAY ABOVE EVERYTHING) ---------- */
-#asciiOverlay {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999 !important; /* highest layer */
-  pointer-events: none;     /* so it doesn't block clicking in panels */
-}
-
+  .right .panel { z-index:0; position:relative; }
+  .left .flash { position:absolute; pointer-events:none; }
 </style>
 </head>
 
@@ -230,8 +246,9 @@
         <div class="banner-area" id="bannerArea"></div>
       </div>
 
-      <!-- ASCII ART BLOCK #1 (skull) -->
+      <!-- ASCII ART BLOCKS -->
       <div class="flash" id="skull"><pre class="ascii">
+
                                                                                           
                                         #                                                 
                                      @&/ &@@@@@@@@  #. / *                                
@@ -243,17 +260,17 @@
                   @@@@@@@@*                                     &@@@@@@@@@ @             
                  @@@@@@@                                          #@@@@@@@ @             
                 @@@@@@@                                             @@@@@@@%              
-               @@@@@@/                              &                @@@@@@@@            
-              .@@@@@@.                           *.@@@ &/             @@@@@@,            
-              @@@@@@          @@@@@@@@         .@@@@@@@@@@@           @@@@@@@            
-             #@@@@@@     ,%@@@@@@@@@@@@&      #@@@@@@@@@@@@@@@       , @@@@@@@          
-              @@@@@@     @@@@@@@@@@@@@@@    &*@@@@@@@@@@@@@@@@#   #@,  @@@@@@.          
-              @@@@@@&   @@@@@@@@@@@@@@@@@   ( @@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@            
-             . @@@@@  ,@@@@@@@@@@@@@@@@@.     &@@@@@@@@@@@@@@@@@ &@@@@@@@@@@@*          
-             @ @@@@@@@@@@@@@@@@@@@@@@@@@        *@@@@@@@@@@@@@@,  @@@@@@@@@@            
+               @@@@@@/                              &                @@@@@@@@           
+              .@@@@@@.                           *.@@@ &/             @@@@@@,           
+              @@@@@@          @@@@@@@@         .@@@@@@@@@@@           @@@@@@@           
+             #@@@@@@     ,%@@@@@@@@@@@@&      #@@@@@@@@@@@@@@@       , @@@@@@@         
+              @@@@@@     @@@@@@@@@@@@@@@    &*@@@@@@@@@@@@@@@@#   #@,  @@@@@@.         
+              @@@@@@&   @@@@@@@@@@@@@@@@@   ( @@@@@@@@@@@@@@@@@@,@@@@@@@@@@@@           
+             . @@@@@  ,@@@@@@@@@@@@@@@@@.     &@@@@@@@@@@@@@@@@@ &@@@@@@@@@@@*         
+             @ @@@@@@@@@@@@@@@@@@@@@@@@@        *@@@@@@@@@@@@@@,  @@@@@@@@@@           
                 @@@@@@@@@@@@@@@@@@@@@@            @@@@@@@@@@@#.     @@@@@@@              
                 %&@@@@@@@.&*@@@@@@@.                , /@&@@          @@@@@@/             
-                   @@@@@@#  @                            @@         ,&@@@@@@.            
+                   @@@@@@#  @                            @@         ,&@@@@@@.           
                    @@@@@@               /                .**    .  *@@@@@@@              
                   @@@@@@         @#   /. *      @&    % @@@@@  @@@@@@@@@@#,              
                  &@@@@@@   @#  @@@@   @@@@@  ,@@@@@@    @@@@@@@@@@@@@@@&@                
@@ -263,16 +280,14 @@
                      @      / ,@@@@@@#(@@@@@@ ,,@@@@@@.  @@@@@%                          
   %                  @          @@@@@&#@@@@@@@@@@@@@@@@@@@@@@@@                          
   .                            .@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@                          
-  *                            , @@@@@@@@@@,  @*@/@@@@@@@% @,/ @@                        
+  *                            , @@@@@@@@@@,  @*@/@@@@@@@% @,/ @@                       
                                   %.@         #*   @       @                              
   (                               @#@              @       @                              
   .                                                @                                       
-  .                                               ,@                                       
+  .                                               ,@                                  
 </pre></div>
 
-      <!-- ASCII ART BLOCK #2 (banner text) -->
       <div class="flash" id="asciiBanner"><pre class="ascii">
-<!-- (first banner ASCII — paste your banner here) -->
 
  ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▓█████ ▓█████▄ 
 ▓██░ ██▒▒████▄    ▒██▀ ▀█   ██▄█▒ ▓█   ▀ ▒██▀ ██▌
@@ -284,9 +299,7 @@
  ░  ░░ ░  ░   ▒   ░        ░ ░░ ░    ░    ░ ░  ░ 
  ░  ░  ░      ░  ░░ ░      ░  ░      ░  ░   ░    
                   ░                       ░      
-
 </pre></div>
-
     </div>
 
     <div class="right">
@@ -296,18 +309,17 @@
 
       <div class="panel" style="height:86px; display:flex; flex-direction:column; justify-content:space-between">
         <div class="pings" id="pings">Pings: idle</div>
-
         <button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer; background-color:red; color:black; border:none; appearance:none;">
           CLICK HERE TO START YOUR MANDATORY TRAINING
         </button>
-
         <div class="small">--This was a simulated phish threat--</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ---------- SCRIPTS (MAIN) ---------- -->
+<!-- ---------- SCRIPTS ---------- -->
+
 <script>
 const CONFIG = {
   matrix: { fps: 30, charSize: 14, chance: 0.96 },
@@ -350,7 +362,23 @@ function startPingCycle(){if(pingMainTimer)return;pingMainTimer=setInterval(()=>
 function stopPingCycle(){clearInterval(pingMainTimer);pingMainTimer=null;}
 function runPingSequence(count=3){let i=0;pingsEl.textContent='Pings:';const step=setInterval(()=>{i++;pingsEl.textContent='Pings:'+'.'.repeat((i%3)+1);addLog(`[UNAUTHORIZED USER] ping${'.'.repeat((i%3)+1)}`);miniMatrixBurst(0.6);if(i>=count){clearInterval(step);pingsEl.textContent='Pings: idle';}},650);}
 
-function flashRandom(el,duration){const parent=el.parentElement;const pw=parent.clientWidth;const ph=parent.clientHeight;const ew=el.offsetWidth;const eh=el.offsetHeight;const left=Math.floor(Math.random()*(pw-ew));const top=Math.floor(Math.random()*(ph-eh));el.style.left=left+'px';el.style.top=top+'px';const color=FLASH_COLORS[Math.floor(Math.random()*FLASH_COLORS.length)];el.querySelector('pre').style.color=color;el.querySelector('pre').style.textShadow=`0 0 8px ${color}30`;el.classList.add('visible');setTimeout(()=>el.classList.remove('visible'),duration);}
+function flashRandom(el,duration){
+  const parent = el.closest('.left') || document.body;
+  const pw = parent.clientWidth;
+  const ph = parent.clientHeight;
+  const ew = el.offsetWidth;
+  const eh = el.offsetHeight;
+  // clamp safe ranges so element stays within visible area
+  const left = Math.max(6, Math.floor(Math.random()*(Math.max(0,pw-ew))));
+  const top  = Math.max(6, Math.floor(Math.random()*(Math.max(0,ph-eh))));
+  el.style.left = left + 'px';
+  el.style.top  = top + 'px';
+  const color = FLASH_COLORS[Math.floor(Math.random()*FLASH_COLORS.length)];
+  const pre = el.querySelector('pre');
+  if(pre){ pre.style.color = color; pre.style.textShadow = `0 0 8px ${color}30`; }
+  el.classList.add('visible');
+  setTimeout(()=>el.classList.remove('visible'), duration);
+}
 
 function startAll(){if(running)return;running=true;resizeCanvas();matrixStep();startFakeLogs();startPingCycle();statusEl.textContent='status: running';}
 function stopAll(){running=false;if(matrixAnimationId)cancelAnimationFrame(matrixAnimationId);stopFakeLogs();stopPingCycle();statusEl.textContent='status: stopped';}
@@ -363,10 +391,9 @@ setTimeout(()=>{btn.style.display='inline-block';},5000);
 btn.addEventListener('click',()=>{window.location.href='https://staysafe.sophos.com/';});
 </script>
 
-<!-- ---------- ASCII OVERLAY (BOTTOM BANNER) ---------- -->
-<div id="asciiOverlay">
+<!-- ---------- ASCII OVERLAY ---------- -->
+<div id="asciiOverlay" aria-hidden="true">
   <pre class="ascii">
-<!-- (Your bottom ASCII banner goes here) -->
 
  _____ _     _        _                    _                              _    _   _                    _       
 |_   _| |   (_)      (_)                  | |                            | |  | | | |                  | |      
@@ -405,13 +432,11 @@ btn.addEventListener('click',()=>{window.location.href='https://staysafe.sophos.
                                                                                 ______     | |         | |      
                                                                                |______|    | |         | |      
                                                                                           _| |_   _    | |    _ 
-                                                                                          \___/  (_)   \_/   (_)
-
+                                                                                          \___/  (_)   \_/   (_) 
   </pre>
 </div>
 
 <script>
-  // Delay + reveal the overlay, then let the flicker loop run forever
   setTimeout(()=>{
     const overlay = document.getElementById('asciiOverlay');
     overlay.style.display = 'flex';
