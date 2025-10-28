@@ -102,14 +102,16 @@
     flex-direction:column;
   }
 
-  pre.ascii{
-    font-family:Consolas,monaco,monospace;
-    white-space:pre;
-    line-height:1;
-    margin:0;
-    padding:0;
-    color:var(--accent);
-    text-shadow:0 0 6px rgba(255,59,48,0.15);
+  /* ---------- ASCII ART SCALING ---------- */
+  pre.ascii {
+    font-family: Consolas, monaco, monospace;
+    white-space: pre;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    color: var(--accent);
+    text-shadow: 0 0 6px rgba(255,59,48,0.15);
+    font-size: clamp(6px, 1.8vw, 16px); /* Smooth responsive scaling */
   }
 
   .right{
@@ -164,6 +166,7 @@
   .flash pre{
     color:#ff3b30;
     text-shadow:0 0 8px rgba(255,59,48,0.18);
+    font-size: clamp(6px, 2vw, 16px); /* Smooth scaling for flashing ASCII too */
   }
 
   /* ---------- RESPONSIVE ENHANCEMENTS ---------- */
@@ -200,14 +203,8 @@
       margin-top: 6px;
     }
 
-    pre.ascii {
-      font-size: 10px;
-      line-height: 0.9;
-      overflow-x: auto;
-    }
-
     #asciiOverlay {
-      font-size: 10px;
+      font-size: clamp(6px, 1.8vw, 14px);
       padding: 10px;
       width: 95vw;
       overflow-x: auto;
@@ -216,15 +213,6 @@
     button#timedButton {
       width: 100%;
       font-size: 14px;
-    }
-  }
-
-  @media (max-width: 500px) {
-    pre.ascii {
-      font-size: 8px;
-    }
-    #asciiOverlay {
-      font-size: 8px;
     }
   }
 </style>
@@ -245,6 +233,8 @@
       <div class="overlay">
         <div class="banner-area" id="bannerArea"></div>
       </div>
+
+      <!-- ASCII ART BLOCK #1 (skull) -->
 
       <div class="flash" id="skull"><pre>
                                                                                           
@@ -285,6 +275,9 @@
   .                                               ,@                                      
 </pre></div>
 
+
+      <!-- ASCII ART BLOCK #2 (banner text) -->
+
       <div class="flash" id="asciiBanner"><pre>
  ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▓█████ ▓█████▄ 
 ▓██░ ██▒▒████▄    ▒██▀ ▀█   ██▄█▒ ▓█   ▀ ▒██▀ ██▌
@@ -318,6 +311,7 @@
 </div>
 
 <!-- ---------- SCRIPTS ---------- -->
+<!-- (All your JavaScript preserved as-is) -->
 <script>
 const CONFIG = {
   matrix: { fps: 30, charSize: 14, chance: 0.96 },
