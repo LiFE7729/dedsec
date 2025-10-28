@@ -201,6 +201,16 @@
   }
 }
 
+/* ---------- FIX STACKING ORDER (ENSURE OVERLAY ABOVE EVERYTHING) ---------- */
+#asciiOverlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999 !important; /* highest layer */
+  pointer-events: none;     /* so it doesn't block clicking in panels */
+}
+
 </style>
 </head>
 
