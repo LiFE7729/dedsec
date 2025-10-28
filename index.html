@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>DeadSec HACK :(</title>
 <style>
-  :root{
+  :root {
     --bg:#020202;
     --text:#d7eedd;
     --green:#30d158;
@@ -13,45 +13,29 @@
     --muted:#7f8b83;
   }
 
-  html,body{
+  html,body {
     height:100%;
     margin:0;
     background:var(--bg);
     color:var(--text);
-    font-family:Consolas, "Courier New", monospace;
+    font-family:Consolas,"Courier New",monospace;
   }
 
-  .wrap{
-    display:flex;
-    flex-direction:column;
-    height:100%;
-  }
+  .wrap { display:flex; flex-direction:column; height:100%; }
 
-  /* ---------- TOPBAR ---------- */
-  .topbar{
+  .topbar {
     padding:10px 14px;
     display:flex;
     align-items:center;
     justify-content:center;
     position:relative;
-    gap:0;
-  }
-
-  .topbar .title {
+    flex-wrap:wrap;
     text-align:center;
-    display:block;
-    line-height:1.2;
-    color:red;
   }
 
-  .topbar .small {
-    text-align:center;
-    display:block;
-    line-height:1.2;
-    color:var(--muted);
-  }
-
-  .topbar .status{
+  .topbar .title { color:red; }
+  .topbar .small { color:var(--muted); }
+  .topbar .status {
     position:absolute;
     right:14px;
     top:50%;
@@ -60,8 +44,7 @@
     font-size:13px;
   }
 
-  /* ---------- MAIN ---------- */
-  .main{
+  .main {
     flex:1;
     display:flex;
     gap:12px;
@@ -69,7 +52,7 @@
     box-sizing:border-box;
   }
 
-  .left{
+  .left {
     flex:1;
     position:relative;
     background:rgba(255,255,255,0.02);
@@ -77,15 +60,9 @@
     overflow:hidden;
   }
 
-  canvas{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    display:block;
-  }
+  canvas { position:absolute; inset:0; width:100%; height:100%; }
 
-  .overlay{
+  .overlay {
     position:relative;
     z-index:2;
     padding:10px;
@@ -94,7 +71,7 @@
     pointer-events:none;
   }
 
-  .banner-area{
+  .banner-area {
     height:100%;
     display:flex;
     align-items:center;
@@ -103,18 +80,18 @@
   }
 
   /* ---------- ASCII ART SCALING ---------- */
-  pre.ascii {
-    font-family: Consolas, monaco, monospace;
-    white-space: pre;
-    line-height: 1;
-    margin: 0;
-    padding: 0;
-    color: var(--accent);
-    text-shadow: 0 0 6px rgba(255,59,48,0.15);
-    font-size: clamp(6px, 1.8vw, 16px); /* Smooth responsive scaling */
+  pre.ascii, .flash pre {
+    font-family:Consolas,monaco,monospace;
+    white-space:pre;
+    line-height:1;
+    margin:0;
+    padding:0;
+    color:var(--accent);
+    text-shadow:0 0 6px rgba(255,59,48,0.15);
+    font-size:clamp(6px,1.8vw,16px);
   }
 
-  .right{
+  .right {
     width:360px;
     min-width:240px;
     display:flex;
@@ -122,33 +99,19 @@
     gap:10px;
   }
 
-  .panel{
+  .panel {
     background:rgba(255,255,255,0.02);
     padding:10px;
     border-radius:6px;
     overflow:auto;
-    height:100%;
   }
 
-  .log{
-    white-space:pre-wrap;
-    line-height:1.25;
-    font-size:13px;
-    color:#dfeee5;
-    overflow-y:auto;
-  }
+  .log { white-space:pre-wrap; line-height:1.25; font-size:13px; }
 
-  .pings{
-    font-size:13px;
-    color:var(--green);
-  }
+  .pings { font-size:13px; color:var(--green); }
+  .small { font-size:12px; color:var(--muted); }
 
-  .small{
-    font-size:12px;
-    color:var(--muted);
-  }
-
-  .flash{
+  .flash {
     position:absolute;
     z-index:5;
     pointer-events:none;
@@ -159,94 +122,56 @@
     transition:opacity 0.22s ease;
   }
 
-  .flash.visible{
-    opacity:1;
-  }
+  .flash.visible { opacity:1; }
 
-  .flash pre{
-    color:#ff3b30;
-    text-shadow:0 0 8px rgba(255,59,48,0.18);
-    font-size: clamp(6px, 2vw, 16px); /* Smooth scaling for flashing ASCII too */
-  }
-
-  /* ---------- RESPONSIVE ENHANCEMENTS ---------- */
-  @media (max-width: 900px) {
-    .main {
-      flex-direction: column;
-    }
-
-    .right {
-      width: 100%;
-      min-width: unset;
-      flex: none;
-      order: 2;
-    }
-
-    .left {
-      order: 1;
-      height: 60vh;
-    }
-
-    .panel {
-      max-height: 40vh;
-    }
-
-    .topbar {
-      flex-direction: column;
-      text-align: center;
-      padding: 8px;
-    }
-
-    .topbar .status {
-      position: static;
-      transform: none;
-      margin-top: 6px;
-    }
-
-    #asciiOverlay {
-      font-size: clamp(6px, 1.8vw, 14px);
-      padding: 10px;
-      width: 95vw;
-      overflow-x: auto;
-    }
-
-    button#timedButton {
-      width: 100%;
-      font-size: 14px;
-    }
-  }
-
-/* ---------- ASCII OVERLAY RESPONSIVE FIX ---------- */
-#asciiOverlay {
-  font-family: Consolas, monaco, monospace;
-  white-space: pre;
-  line-height: 1;
-  font-size: 14px;
-  color: var(--accent);
-  text-shadow: 0 0 6px rgba(255,59,48,0.15);
-  overflow-x: auto;
-  max-width: 95vw;
-  max-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  box-sizing: border-box;
-}
-
-@media (max-width: 900px) {
+  /* ---------- BOTTOM ASCII OVERLAY ---------- */
   #asciiOverlay {
-    font-size: 10px;
-    line-height: 0.9;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    color:var(--accent);
+    font-family:Consolas,monaco,monospace;
+    white-space:pre;
+    text-align:center;
+    text-shadow:0 0 6px rgba(255,59,48,0.15);
+    font-size:clamp(6px,1.8vw,16px);
+    line-height:1;
+    z-index:9999;
+    max-width:95vw;
+    overflow-x:auto;
+    padding:10px;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background:transparent;
+    opacity:0;
+    animation: fadeIn 2s ease forwards, flickerLoop 6s infinite;
+    animation-delay: 1s, 3s;
   }
-}
 
-@media (max-width: 500px) {
-  #asciiOverlay {
-    font-size: 8px;
+  /* ---------- FLICKER ANIMATIONS ---------- */
+  @keyframes fadeIn {
+    from { opacity:0; }
+    to { opacity:1; }
   }
-}
 
+  @keyframes flickerLoop {
+    0%,19%,21%,23%,25%,54%,56%,100% { opacity:1; filter:brightness(1); }
+    20%,24%,55% { opacity:0.4; filter:brightness(0.7); }
+    22%,57% { opacity:0.2; filter:brightness(0.4); }
+    40% { opacity:0.8; filter:brightness(1.2); }
+    60% { opacity:0.6; filter:brightness(0.9); }
+    80% { opacity:0.9; filter:brightness(1.1); }
+  }
+
+  @media (max-width:900px) {
+    .main { flex-direction:column; }
+    .right { width:100%; order:2; }
+    .left { order:1; height:60vh; }
+    .panel { max-height:40vh; }
+    .topbar .status { position:static; transform:none; margin-top:6px; }
+  }
 </style>
 </head>
 
@@ -259,14 +184,14 @@
   </div>
 
   <div class="main">
-    <div class="left" aria-live="polite">
+    <div class="left">
       <canvas id="matrix"></canvas>
-
       <div class="overlay">
         <div class="banner-area" id="bannerArea"></div>
       </div>
 
       <!-- ASCII ART BLOCK #1 (skull) -->
+      <!-- (your skull ASCII here) -->
 
       <div class="flash" id="skull"><pre>
                                                                                           
@@ -309,6 +234,7 @@
 
 
       <!-- ASCII ART BLOCK #2 (banner text) -->
+      <!-- (your first banner ASCII here) -->
 
       <div class="flash" id="asciiBanner"><pre>
  ██░ ██  ▄▄▄       ▄████▄   ██ ▄█▀▓█████ ▓█████▄ 
@@ -328,22 +254,62 @@
       <div class="panel" style="flex:1">
         <div id="logs" class="log" aria-live="polite"></div>
       </div>
-
       <div class="panel" style="height:86px; display:flex; flex-direction:column; justify-content:space-between">
         <div class="pings" id="pings">Pings: idle</div>
-
-        <button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer; background-color:red; color:black; border:none; appearance:none;">
-          CLICK HERE TO START YOUR MANDATORY TRAINING
-        </button>
-
+        <button id="timedButton" style="display:none; padding:6px 12px; font-size:13px; cursor:pointer; background-color:red; color:black; border:none;">CLICK HERE TO START YOUR MANDATORY TRAINING</button>
         <div class="small">--This was a simulated phish threat--</div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ---------- SCRIPTS ---------- -->
-<!-- (All your JavaScript preserved as-is) -->
+<!-- ---------- ASCII OVERLAY (BOTTOM BANNER) ---------- -->
+<div id="asciiOverlay">
+  <!-- (Your bottom ASCII banner goes here) -->
+<div id="asciiOverlay" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); color:#ffffff; font-family:monospace; white-space:pre; font-size:14px; z-index:9999; text-align:center;">
+ _____ _     _        _                    _                              _    _   _                    _       
+|_   _| |   (_)      (_)                  | |                            | |  | | | |                  | |      
+  | | | |__  _ ___    _ ___    _ __   ___ | |_     __ _    _ __ ___  __ _| |  | |_| |__  _ __ ___  __ _| |_     
+  | | | '_ \| / __|  | / __|  | '_ \ / _ \| __|   / _` |  | '__/ _ \/ _` | |  | __| '_ \| '__/ _ \/ _` | __|    
+  | | | | | | \__ \  | \__ \  | | | | (_) | |_   | (_| |  | | |  __/ (_| | |  | |_| | | | | |  __/ (_| | |_   _ 
+  \_/ |_| |_|_|___/  |_|___/  |_| |_|\___/ \__|   \__,_|  |_|  \___|\__,_|_|   \__|_| |_|_|  \___|\__,_|\__| ( )
+                                                                                                             |/ 
+                                                                                                                
+ _           _      _ _                      _     _    _                        _                              
+| |         | |    (_) |                    | |   | |  | |                      | |                             
+| |__  _   _| |_    _| |_     ___ ___  _   _| | __| |  | |__   __ ___   _____   | |__   ___  ___ _ __           
+| '_ \| | | | __|  | | __|   / __/ _ \| | | | |/ _` |  | '_ \ / _` \ \ / / _ \  | '_ \ / _ \/ _ \ '_ \          
+| |_) | |_| | |_   | | |_   | (_| (_) | |_| | | (_| |  | | | | (_| |\ V /  __/  | |_) |  __/  __/ | | |  _      
+|_.__/ \__,_|\__|  |_|\__|   \___\___/ \__,_|_|\__,_|  |_| |_|\__,_| \_/ \___|  |_.__/ \___|\___|_| |_| (_)     
+                                                                                                                
+                                                                                                                
+ _____ _ _      _       _   _                          _    _           _   _                 _                 
+/  __ \ (_)    | |     | | | |                        | |  | |         | | | |               | |                
+| /  \/ |_  ___| | __  | |_| |__   ___    _ __ ___  __| |  | |__  _   _| |_| |_ ___  _ __    | |_ ___           
+| |   | | |/ __| |/ /  | __| '_ \ / _ \  | '__/ _ \/ _` |  | '_ \| | | | __| __/ _ \| '_ \   | __/ _ \          
+| \__/\ | | (__|   <   | |_| | | |  __/  | | |  __/ (_| |  | |_) | |_| | |_| || (_) | | | |  | || (_) |         
+ \____/_|_|\___|_|\_\   \__|_| |_|\___|  |_|  \___|\__,_|  |_.__/ \__,_|\__|\__\___/|_| |_|   \__\___/          
+                                                                                                                
+                                                                                                                
+     _             _                                _             _       _                                     
+    | |           | |                              | |           (_)     (_)                                    
+ ___| |_ __ _ _ __| |_    _   _  ___  _   _ _ __   | |_ _ __ __ _ _ _ __  _ _ __   __ _                         
+/ __| __/ _` | '__| __|  | | | |/ _ \| | | | '__|  | __| '__/ _` | | '_ \| | '_ \ / _` |                        
+\__ \ || (_| | |  | |_   | |_| | (_) | |_| | |     | |_| | | (_| | | | | | | | | | (_| |  _                     
+|___/\__\__,_|_|   \__|   \__, |\___/ \__,_|_|      \__|_|  \__,_|_|_| |_|_|_| |_|\__, | (_)                    
+                           __/ |                                                   __/ |                        
+                          |___/                                                   |___/                         
+                                                                                          _____       _____     
+                                                                                         |_   _|     |_   _|    
+                                                                                ______     | |         | |      
+                                                                               |______|    | |         | |      
+                                                                                          _| |_   _    | |    _ 
+                                                                                          \___/  (_)   \_/   (_)
+                                                                                                                
+                                                                                                                
+
+</div>
+
 <script>
 const CONFIG = {
   matrix: { fps: 30, charSize: 14, chance: 0.96 },
@@ -399,51 +365,12 @@ setTimeout(()=>{btn.style.display='inline-block';},5000);
 btn.addEventListener('click',()=>{window.location.href='https://staysafe.sophos.com/';});
 </script>
 
-<div id="asciiOverlay" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); color:#ffffff; font-family:monospace; white-space:pre; font-size:14px; z-index:9999; text-align:center;">
- _____ _     _        _                    _                              _    _   _                    _       
-|_   _| |   (_)      (_)                  | |                            | |  | | | |                  | |      
-  | | | |__  _ ___    _ ___    _ __   ___ | |_     __ _    _ __ ___  __ _| |  | |_| |__  _ __ ___  __ _| |_     
-  | | | '_ \| / __|  | / __|  | '_ \ / _ \| __|   / _` |  | '__/ _ \/ _` | |  | __| '_ \| '__/ _ \/ _` | __|    
-  | | | | | | \__ \  | \__ \  | | | | (_) | |_   | (_| |  | | |  __/ (_| | |  | |_| | | | | |  __/ (_| | |_   _ 
-  \_/ |_| |_|_|___/  |_|___/  |_| |_|\___/ \__|   \__,_|  |_|  \___|\__,_|_|   \__|_| |_|_|  \___|\__,_|\__| ( )
-                                                                                                             |/ 
-                                                                                                                
- _           _      _ _                      _     _    _                        _                              
-| |         | |    (_) |                    | |   | |  | |                      | |                             
-| |__  _   _| |_    _| |_     ___ ___  _   _| | __| |  | |__   __ ___   _____   | |__   ___  ___ _ __           
-| '_ \| | | | __|  | | __|   / __/ _ \| | | | |/ _` |  | '_ \ / _` \ \ / / _ \  | '_ \ / _ \/ _ \ '_ \          
-| |_) | |_| | |_   | | |_   | (_| (_) | |_| | | (_| |  | | | | (_| |\ V /  __/  | |_) |  __/  __/ | | |  _      
-|_.__/ \__,_|\__|  |_|\__|   \___\___/ \__,_|_|\__,_|  |_| |_|\__,_| \_/ \___|  |_.__/ \___|\___|_| |_| (_)     
-                                                                                                                
-                                                                                                                
- _____ _ _      _       _   _                          _    _           _   _                 _                 
-/  __ \ (_)    | |     | | | |                        | |  | |         | | | |               | |                
-| /  \/ |_  ___| | __  | |_| |__   ___    _ __ ___  __| |  | |__  _   _| |_| |_ ___  _ __    | |_ ___           
-| |   | | |/ __| |/ /  | __| '_ \ / _ \  | '__/ _ \/ _` |  | '_ \| | | | __| __/ _ \| '_ \   | __/ _ \          
-| \__/\ | | (__|   <   | |_| | | |  __/  | | |  __/ (_| |  | |_) | |_| | |_| || (_) | | | |  | || (_) |         
- \____/_|_|\___|_|\_\   \__|_| |_|\___|  |_|  \___|\__,_|  |_.__/ \__,_|\__|\__\___/|_| |_|   \__\___/          
-                                                                                                                
-                                                                                                                
-     _             _                                _             _       _                                     
-    | |           | |                              | |           (_)     (_)                                    
- ___| |_ __ _ _ __| |_    _   _  ___  _   _ _ __   | |_ _ __ __ _ _ _ __  _ _ __   __ _                         
-/ __| __/ _` | '__| __|  | | | |/ _ \| | | | '__|  | __| '__/ _` | | '_ \| | '_ \ / _` |                        
-\__ \ || (_| | |  | |_   | |_| | (_) | |_| | |     | |_| | | (_| | | | | | | | | | (_| |  _                     
-|___/\__\__,_|_|   \__|   \__, |\___/ \__,_|_|      \__|_|  \__,_|_|_| |_|_|_| |_|\__, | (_)                    
-                           __/ |                                                   __/ |                        
-                          |___/                                                   |___/                         
-                                                                                          _____       _____     
-                                                                                         |_   _|     |_   _|    
-                                                                                ______     | |         | |      
-                                                                               |______|    | |         | |      
-                                                                                          _| |_   _    | |    _ 
-                                                                                          \___/  (_)   \_/   (_)
-                                                                                                                
-                                                                                                                
-</div>
-
 <script>
-setTimeout(()=>{document.getElementById('asciiOverlay').style.display='block';},5000);
+  // Delay + reveal the overlay, then let the flicker loop run forever
+  setTimeout(()=>{
+    const overlay = document.getElementById('asciiOverlay');
+    overlay.style.display = 'flex';
+  },3000);
 </script>
 
 </body>
