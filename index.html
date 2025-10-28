@@ -215,6 +215,38 @@
       font-size: 14px;
     }
   }
+
+/* ---------- ASCII OVERLAY RESPONSIVE FIX ---------- */
+#asciiOverlay {
+  font-family: Consolas, monaco, monospace;
+  white-space: pre;
+  line-height: 1;
+  font-size: 14px;
+  color: var(--accent);
+  text-shadow: 0 0 6px rgba(255,59,48,0.15);
+  overflow-x: auto;
+  max-width: 95vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  #asciiOverlay {
+    font-size: 10px;
+    line-height: 0.9;
+  }
+}
+
+@media (max-width: 500px) {
+  #asciiOverlay {
+    font-size: 8px;
+  }
+}
+
 </style>
 </head>
 
