@@ -173,6 +173,29 @@
     .panel { max-height:40vh; }
     .topbar .status { position:static; transform:none; margin-top:6px; }
   }
+
+/* ---------- MOBILE FIX + VERTICAL CENTER FOR ASCII OVERLAY ---------- */
+@media (max-width: 600px) {
+  #asciiOverlay pre.ascii {
+    font-size: clamp(4px, 2.5vw, 10px); /* smaller font size for narrow screens */
+    line-height: 1.05;
+  }
+
+  #asciiOverlay {
+    max-width: 90vw;       /* keep overlay inside viewport */
+    padding: 4px;          /* tighter padding */
+    overflow-x: hidden;    /* prevent horizontal scroll */
+  }
+}
+
+/* Adjust vertical scaling on short screens (e.g. landscape phones) */
+@media (max-height: 600px) {
+  #asciiOverlay {
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0.85); /* shrink slightly */
+  }
+}
+
 </style>
 </head>
 
